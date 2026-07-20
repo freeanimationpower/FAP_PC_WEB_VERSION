@@ -847,13 +847,15 @@ function exportVideo() {
   videoCanvas.height = drawCanvas.height;
   const vctx = videoCanvas.getContext('2d');
 
-  const stream = videoCanvas.captureStream(state.fps);
+  const stream = videoCanvas.captureStream(0);
+  const track = stream.getVideoTracks()[0];
+  const canRequestFrame = track && typeof track.requestFrame === 'function';
 
-  let mimeType = 'video/webm';
-  if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) mimeType = 'video/webm;codecs=vp9';
-  else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) mimeType = 'video/webm;codecs=vp8';
-  if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E')) mimeType = 'video/mp4;codecs=avc1.42E01E';
-  else if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
+  let mimeType = 'video/webm;codecs=vp9';
+  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8';
+  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+  // fallback for Safari
+  if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
 
   const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
   const chunks = [];
@@ -869,25 +871,34 @@ function exportVideo() {
     downloadBlob(new Blob(chunks, { type: mimeType }), 'animacion.' + ext);
   };
 
-  let frameIdx = 0;
   const frameDelay = 1000 / state.fps;
+  let frameIdx = 0;
 
   vctx.fillStyle = '#FFFFFF';
   vctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
+  if (canRequestFrame) track.requestFrame();
+
   recorder.start();
 
-  function drawFrame() {
+  function drawNext() {
     if (frameIdx >= state.totalFrames) {
-      recorder.stop();
+      setTimeout(() => recorder.stop(), frameDelay);
       return;
     }
     const src = renderFrame(frameIdx);
-    vctx.clearRect(0, 0, videoCanvas.width, videoCanvas.height);
+    vctx.fillStyle = '#FFFFFF';
+    vctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
     vctx.drawImage(src, 0, 0);
+
+    if (canRequestFrame) {
+      track.requestFrame();
+    }
+
     frameIdx++;
-    setTimeout(drawFrame, frameDelay);
+    setTimeout(drawNext, frameDelay);
   }
-  drawFrame();
+
+  setTimeout(drawNext, frameDelay);
 }
 
 // ─── EXPORT EVENTS ───────────────────
