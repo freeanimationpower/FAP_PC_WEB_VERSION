@@ -441,15 +441,11 @@ function loadFrame(fn) {
 
 function getPos(e) {
   const rect = drawCanvas.getBoundingClientRect();
-  const sx = drawCanvas.width / rect.width;
-  const sy = drawCanvas.height / rect.height;
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  const logicalX = (clientX - rect.left) / viewport.zoom - viewport.panX;
-  const logicalY = (clientY - rect.top) / viewport.zoom - viewport.panY;
   return {
-    x: logicalX * sx,
-    y: logicalY * sy,
+    x: (clientX - rect.left) / viewport.zoom - viewport.panX,
+    y: (clientY - rect.top) / viewport.zoom - viewport.panY,
     clientX, clientY,
     pressure: e.touches ? (e.touches[0].force || 1) : (e.pressure || 1)
   };
