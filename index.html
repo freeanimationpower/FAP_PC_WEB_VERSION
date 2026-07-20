@@ -444,8 +444,8 @@ function getPos(e) {
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const clientY = e.touches ? e.touches[0].clientY : e.clientY;
   return {
-    x: (clientX - rect.left) / viewport.zoom - viewport.panX,
-    y: (clientY - rect.top) / viewport.zoom - viewport.panY,
+    x: (clientX - rect.left) * (drawCanvas.width / rect.width),
+    y: (clientY - rect.top) * (drawCanvas.height / rect.height),
     clientX, clientY,
     pressure: e.touches ? (e.touches[0].force || 1) : (e.pressure || 1)
   };
