@@ -303,8 +303,28 @@ const ctx = drawCanvas.getContext('2d');
 const frameBuffer = document.createElement('canvas');
 const fbCtx = frameBuffer.getContext('2d');
 let isDrawing = false, lastX = 0, lastY = 0;
-const strokes = {};
+
+const frameCanvases = {};
+const strokeCanvases = {};
 const undoStacks = {};
+const redoStacks = {};
+const MAX_UNDO = 30;
+const storage = { tmp: document.createElement('canvas') };
+
+function ensureFrameCanvas(key) {
+  if (!frameCanvases[key]) {
+    frameCanvases[key] = document.createElement('canvas');
+    frameCanvases[key].width = frameBuffer.width;
+    frameCanvases[key].height = frameBuffer.height;
+  }
+}
+
+function clearAllFrameData() {
+  for (const k in frameCanvases) delete frameCanvases[k];
+  for (const k in strokeCanvases) delete strokeCanvases[k];
+  for (const k in undoStacks) delete undoStacks[k];
+  for (const k in redoStacks) delete redoStacks[k];
+}
 
 function resizeCanvas() {
   const w = drawCanvas.parentElement.clientWidth;
@@ -314,59 +334,93 @@ function resizeCanvas() {
     drawCanvas.height = h;
     frameBuffer.width = w;
     frameBuffer.height = h;
+    storage.tmp.width = w;
+    storage.tmp.height = h;
+    clearAllFrameData();
     loadFrame(state.currentFrame);
   }
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-function renderFrame(fn) {
+function exportFrame(fn) {
+  const fc = frameCanvases[`frame_${fn}`];
+  if (fc) return fc;
   const c = document.createElement('canvas');
   c.width = drawCanvas.width; c.height = drawCanvas.height;
   const oc = c.getContext('2d');
   oc.fillStyle = '#FFFFFF';
-  oc.fillRect(0,0,c.width,c.height);
-  const key = `frame_${fn}`;
-  if (strokes[key]) strokes[key].forEach(d => oc.putImageData(d,0,0));
+  oc.fillRect(0, 0, c.width, c.height);
   return c;
+}
+
+function getStrokeLayer(key) {
+  if (strokeCanvases[key]) return strokeCanvases[key];
+  const fc = frameCanvases[key];
+  if (!fc) return null;
+  const w = fc.width, h = fc.height;
+  strokeCanvases[key] = document.createElement('canvas');
+  strokeCanvases[key].width = w;
+  strokeCanvases[key].height = h;
+  const scCtx = strokeCanvases[key].getContext('2d');
+  const imgData = fc.getContext('2d').getImageData(0, 0, w, h);
+  const pixels = imgData.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    if (pixels[i] > 250 && pixels[i + 1] > 250 && pixels[i + 2] > 250) {
+      pixels[i + 3] = 0;
+    }
+  }
+  scCtx.putImageData(imgData, 0, 0);
+  return strokeCanvases[key];
+}
+
+function tintAndDraw(dstCtx, sourceCanvas, tintColor, alpha) {
+  if (!sourceCanvas) return;
+  const w = sourceCanvas.width, h = sourceCanvas.height;
+  storage.tmp.width = w;
+  storage.tmp.height = h;
+  const tc = storage.tmp.getContext('2d');
+  tc.clearRect(0, 0, w, h);
+  tc.drawImage(sourceCanvas, 0, 0);
+  tc.globalCompositeOperation = 'source-atop';
+  tc.fillStyle = tintColor;
+  tc.fillRect(0, 0, w, h);
+  tc.globalCompositeOperation = 'source-over';
+  dstCtx.globalAlpha = alpha;
+  dstCtx.drawImage(storage.tmp, 0, 0);
 }
 
 function loadFrame(fn) {
   const key = `frame_${fn}`;
+
   fbCtx.clearRect(0, 0, frameBuffer.width, frameBuffer.height);
   fbCtx.fillStyle = '#FFFFFF';
   fbCtx.fillRect(0, 0, frameBuffer.width, frameBuffer.height);
-  if (strokes[key]) strokes[key].forEach(d => fbCtx.putImageData(d, 0, 0));
+  const fc = frameCanvases[key];
+  if (fc) fbCtx.drawImage(fc, 0, 0);
 
-  ctx.clearRect(0,0,drawCanvas.width,drawCanvas.height);
+  ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0,0,drawCanvas.width,drawCanvas.height);
+  ctx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
 
   if (state.onionEnabled) {
     for (let i = 3; i > 0; i--) {
-      let pn = fn - i;
+      const pn = fn - i;
       if (pn < 0) continue;
-      const pk = `frame_${pn}`;
-      if (strokes[pk] && strokes[pk].length > 0) {
-        ctx.globalAlpha = 0.35 * (1 - (i-1)*0.25);
-        ctx.drawImage(renderFrame(pn), 0, 0);
-      }
+      const layer = getStrokeLayer(`frame_${pn}`);
+      if (layer) tintAndDraw(ctx, layer, '#FF4444', 0.35 * (1 - (i - 1) * 0.25));
     }
     for (let i = 3; i > 0; i--) {
-      let nn = fn + i;
+      const nn = fn + i;
       if (nn >= state.totalFrames) continue;
-      const nk = `frame_${nn}`;
-      if (strokes[nk] && strokes[nk].length > 0) {
-        ctx.globalAlpha = 0.35 * (1 - (i-1)*0.25);
-        ctx.drawImage(renderFrame(nn), 0, 0);
-      }
+      const layer = getStrokeLayer(`frame_${nn}`);
+      if (layer) tintAndDraw(ctx, layer, '#44FF44', 0.35 * (1 - (i - 1) * 0.25));
     }
   }
-  ctx.globalAlpha = 1;
 
-  if (strokes[key] && strokes[key].length > 0) {
-    ctx.drawImage(frameBuffer, 0, 0);
-  }
+  ctx.globalAlpha = 1;
+  if (fc) ctx.drawImage(fc, 0, 0);
+
   document.getElementById('onionIndicator').style.display = state.onionEnabled ? 'flex' : 'none';
 }
 
@@ -501,11 +555,23 @@ function floodFill(x, y) {
 
 function saveStroke() {
   const key = `frame_${state.currentFrame}`;
-  if (!strokes[key]) strokes[key] = [];
-  strokes[key].push(fbCtx.getImageData(0, 0, frameBuffer.width, frameBuffer.height));
+
   if (!undoStacks[key]) undoStacks[key] = [];
-  undoStacks[key] = strokes[key].slice();
-  if (undoStacks[key].length > 128) undoStacks[key].shift();
+  if (frameCanvases[key]) {
+    undoStacks[key].push(
+      frameCanvases[key].getContext('2d').getImageData(0, 0, frameCanvases[key].width, frameCanvases[key].height)
+    );
+    if (undoStacks[key].length > MAX_UNDO) undoStacks[key].shift();
+  }
+
+  if (redoStacks[key]) redoStacks[key] = [];
+
+  ensureFrameCanvas(key);
+  const fctx = frameCanvases[key].getContext('2d');
+  fctx.clearRect(0, 0, frameCanvases[key].width, frameCanvases[key].height);
+  fctx.drawImage(frameBuffer, 0, 0);
+
+  delete strokeCanvases[key];
 }
 
 // Mouse events
@@ -677,21 +743,46 @@ document.querySelector('.toolbar').addEventListener('click', e => {
 });
 
 // ─── UNDO / REDO ────────────────────
-const undoStack = [], redoStack = [];
 function undoStroke() {
   const key = `frame_${state.currentFrame}`;
-  if (strokes[key] && strokes[key].length > 0) {
-    redoStack.push(strokes[key].pop());
-    loadFrame(state.currentFrame);
+  const stack = undoStacks[key];
+  if (!stack || stack.length === 0) return;
+
+  if (!redoStacks[key]) redoStacks[key] = [];
+  if (redoStacks[key].length >= MAX_UNDO) redoStacks[key].shift();
+
+  if (frameCanvases[key]) {
+    redoStacks[key].push(
+      frameCanvases[key].getContext('2d').getImageData(0, 0, frameCanvases[key].width, frameCanvases[key].height)
+    );
   }
+
+  const prev = stack.pop();
+  ensureFrameCanvas(key);
+  frameCanvases[key].getContext('2d').putImageData(prev, 0, 0);
+  delete strokeCanvases[key];
+  loadFrame(state.currentFrame);
 }
+
 function redoStroke() {
   const key = `frame_${state.currentFrame}`;
-  if (redoStack.length > 0) {
-    if (!strokes[key]) strokes[key] = [];
-    strokes[key].push(redoStack.pop());
-    loadFrame(state.currentFrame);
+  const stack = redoStacks[key];
+  if (!stack || stack.length === 0) return;
+
+  if (!undoStacks[key]) undoStacks[key] = [];
+  if (undoStacks[key].length >= MAX_UNDO) undoStacks[key].shift();
+
+  if (frameCanvases[key]) {
+    undoStacks[key].push(
+      frameCanvases[key].getContext('2d').getImageData(0, 0, frameCanvases[key].width, frameCanvases[key].height)
+    );
   }
+
+  const next = stack.pop();
+  ensureFrameCanvas(key);
+  frameCanvases[key].getContext('2d').putImageData(next, 0, 0);
+  delete strokeCanvases[key];
+  loadFrame(state.currentFrame);
 }
 
 // ─── PLAYBACK ───────────────────────
@@ -733,7 +824,7 @@ function exportGIF() {
 
   const frameData = [];
   for (let i = 0; i < state.totalFrames; i++) {
-    const src = renderFrame(i);
+    const src = exportFrame(i);
     const c = document.createElement('canvas');
     c.width = GIF_W; c.height = GIF_H;
     const oc = c.getContext('2d');
@@ -910,7 +1001,7 @@ function exportVideo() {
       setTimeout(() => recorder.stop(), frameDelay);
       return;
     }
-    const src = renderFrame(frameIdx);
+    const src = exportFrame(frameIdx);
     vctx.fillStyle = '#FFFFFF';
     vctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
     vctx.drawImage(src, 0, 0);
