@@ -76,6 +76,9 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 .toolbar .spacer { flex:1; min-width:2px; }
 .toolbar .frame-counter { color:var(--text-primary); font-size:14px; font-weight:700; min-width:50px; text-align:center; flex-shrink:0; }
 .toolbar .fps-tag { color:var(--text-secondary); font-size:11px; min-width:30px; text-align:center; flex-shrink:0; }
+.fps-select { background:var(--bg-tertiary); color:var(--text-primary); border:1px solid var(--border); border-radius:5px; font-size:11px; padding:2px 4px; outline:none; cursor:pointer; flex-shrink:0; min-width:55px; text-align:center; -webkit-appearance:none; appearance:none; }
+.fps-select:hover { border-color:var(--accent-light); }
+.fps-select:focus { border-color:var(--accent); }
 
 /* CANVAS */
 .canvas-area { flex:1 1 0; background:var(--bg-canvas); position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:120px; padding:12px 8px; }
@@ -145,7 +148,7 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
   .btn { width:28px; height:28px; border-radius:5px; }
   .ico { width:15px; height:15px; }
   .toolbar .frame-counter { font-size:11px; min-width:36px; }
-  .toolbar .fps-tag { font-size:9px; min-width:20px; }
+  .fps-select { font-size:9px; min-width:48px; padding:1px 2px; }
   .toolbar .logo { width:22px; height:22px; }
   .tool-panel { min-height:34px; padding:2px 4px; gap:1px; }
   .color-strip { padding:2px 4px; gap:4px; }
@@ -183,7 +186,13 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
     <span class="frame-counter" id="frameCounter">0 / 24</span>
     <button class="btn" title="Add Frame"><img class="ico" src="icons/add_frame.png" alt="+"></button>
     <button class="btn" title="Remove Frame"><img class="ico" src="icons/remove_frame.png" alt="-"></button>
-    <span class="fps-tag">24fps</span>
+    <select id="fpsSelector" class="fps-select">
+      <option value="8">8 fps</option>
+      <option value="12">12 fps</option>
+      <option value="24" selected>24 fps</option>
+      <option value="30">30 fps</option>
+      <option value="60">60 fps</option>
+    </select>
     <button class="btn" id="exportGifBtn" title="Export GIF"><img class="ico" src="icons/export gif.png" alt="GIF"></button>
     <button class="btn" id="exportVideoBtn" title="Export Video"><img class="ico" src="icons/export video.png" alt="Video"></button>
   </div>
@@ -653,6 +662,15 @@ document.getElementById('opacitySlider').addEventListener('input', function() {
   document.getElementById('opacityValue').textContent = this.value + '%';
 });
 
+// ─── FPS SELECTOR ────────────────────
+document.getElementById('fpsSelector').addEventListener('change', function() {
+  state.fps = +this.value;
+  if (state.isPlaying) {
+    playAccumulator = 0;
+    playLastTime = 0;
+  }
+});
+
 // ─── TIMELINE ───────────────────────
 const timeline = document.getElementById('timeline');
 function renderTimeline() {
@@ -787,16 +805,46 @@ function redoStroke() {
 }
 
 // ─── PLAYBACK ───────────────────────
-let playInterval = null;
+let playRafId = null;
+let playAccumulator = 0;
+let playLastTime = 0;
+
+function playLoop(timestamp) {
+  if (!state.isPlaying) return;
+
+  const frameDuration = 1000 / state.fps;
+
+  if (playLastTime === 0) playLastTime = timestamp;
+  const delta = timestamp - playLastTime;
+  playLastTime = timestamp;
+
+  playAccumulator += delta;
+
+  let skip = 0;
+  while (playAccumulator >= frameDuration && skip < 4) {
+    playAccumulator -= frameDuration;
+    selectFrame((state.currentFrame + 1) % state.totalFrames);
+    skip++;
+  }
+  if (playAccumulator >= frameDuration) playAccumulator = 0;
+
+  playRafId = requestAnimationFrame(playLoop);
+}
+
 function togglePlay() {
   state.isPlaying = !state.isPlaying;
   const icon = document.querySelector('[title="Play"] .ico');
   if (state.isPlaying) {
     icon.classList.add('accent');
-    playInterval = setInterval(() => selectFrame((state.currentFrame + 1) % state.totalFrames), 1000 / state.fps);
+    playAccumulator = 0;
+    playLastTime = 0;
+    playRafId = requestAnimationFrame(playLoop);
   } else {
     icon.classList.remove('accent');
-    clearInterval(playInterval);
+    if (playRafId) {
+      cancelAnimationFrame(playRafId);
+      playRafId = null;
+    }
   }
 }
 
@@ -956,7 +1004,7 @@ function exportGIF() {
 }
 
 // ─── EXPORT VIDEO ────────────────────
-function exportVideo() {
+async function exportVideo() {
   if (state.isPlaying) togglePlay();
 
   const videoCanvas = document.createElement('canvas');
@@ -971,7 +1019,6 @@ function exportVideo() {
   let mimeType = 'video/webm;codecs=vp9';
   if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8';
   if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
-  // fallback for Safari
   if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
 
   const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
@@ -983,26 +1030,17 @@ function exportVideo() {
     recorder = new MediaRecorder(stream, { videoBitsPerSecond: 8000000 });
   }
 
+  const frameDuration = 1000 / state.fps;
+
   recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
   recorder.onstop = () => {
     downloadBlob(new Blob(chunks, { type: mimeType }), 'animacion.' + ext);
   };
 
-  const frameDelay = 1000 / state.fps;
-  let frameIdx = 0;
-
-  vctx.fillStyle = '#FFFFFF';
-  vctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
-  if (canRequestFrame) track.requestFrame();
-
   recorder.start();
 
-  function drawNext() {
-    if (frameIdx >= state.totalFrames) {
-      setTimeout(() => recorder.stop(), frameDelay);
-      return;
-    }
-    const src = exportFrame(frameIdx);
+  for (let i = 0; i < state.totalFrames; i++) {
+    const src = exportFrame(i);
     vctx.fillStyle = '#FFFFFF';
     vctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
     vctx.drawImage(src, 0, 0);
@@ -1011,11 +1049,12 @@ function exportVideo() {
       track.requestFrame();
     }
 
-    frameIdx++;
-    setTimeout(drawNext, frameDelay);
+    if (i < state.totalFrames - 1) {
+      await new Promise(r => setTimeout(r, frameDuration));
+    }
   }
 
-  setTimeout(drawNext, frameDelay);
+  recorder.stop();
 }
 
 // ─── EXPORT EVENTS ───────────────────
