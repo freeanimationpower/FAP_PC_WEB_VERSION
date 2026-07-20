@@ -301,17 +301,32 @@ let isPanning = false, panStartX = 0, panStartY = 0, panStartPanX = 0, panStartP
 
 // ─── BRUSHES ────────────────────────
 const BRUSHES = {
-  round:       { cap:'round',  join:'round',  scale:1.0,  alpha:1.0,  filter:null, label:'Round' },
-  square:      { cap:'square', join:'miter',  scale:1.0,  alpha:1.0,  filter:null, label:'Square' },
-  pencil:      { cap:'square', join:'miter',  fixed:1,    alpha:1.0,  filter:null, label:'Pencil' },
-  soft:        { cap:'round',  join:'round',  scale:1.2,  alpha:1.0,  filter:'blur(3px)', label:'Soft' },
-  calligraphy: { cap:'round',  join:'round',  scale:1.0,  alpha:1.0,  filter:null, slant:45, ratio:0.3, label:'Calligraphy' },
-  marker:      { cap:'round',  join:'round',  scale:1.4,  alpha:0.65, filter:null, label:'Marker' },
-  ink:         { cap:'round',  join:'round',  scale:1.05, alpha:1.0,  filter:null, label:'Ink' },
-  chalk:       { cap:'butt',   join:'round',  scale:0.5,  alpha:1.0,  filter:null, jitter:true, label:'Chalk' },
-  glow:        { cap:'round',  join:'round',  scale:1.8,  alpha:0.25, filter:'blur(5px)', outer:true, label:'Glow' },
-  pixel:       { cap:'square', join:'miter',  fixed:1,    alpha:1.0,  filter:null, crisp:true, label:'Pixel' }
+  round:       { cap:'round',  join:'round',  scale:1.0,  alpha:1.0,  label:'Round' },
+  square:      { cap:'square', join:'miter',  scale:1.0,  alpha:1.0,  label:'Square' },
+  pencil:      { cap:'square', join:'miter',  fixed:1,    alpha:1.0,  label:'Pencil' },
+  soft:        { cap:'round',  join:'round',  scale:1.2,  alpha:1.0,  shadow:3, label:'Soft' },
+  calligraphy: { cap:'round',  join:'round',  scale:1.0,  alpha:1.0,  slant:45, ratio:0.3, label:'Calligraphy' },
+  marker:      { cap:'round',  join:'round',  scale:1.4,  alpha:0.65, label:'Marker' },
+  ink:         { cap:'round',  join:'round',  scale:1.05, alpha:1.0,  label:'Ink' },
+  chalk:       { cap:'butt',   join:'round',  scale:0.5,  alpha:1.0,  jitter:true, label:'Chalk' },
+  glow:        { cap:'round',  join:'round',  scale:1.8,  alpha:0.3,  shadow:5, innerSize:0.3, doubleStroke:true, label:'Glow' },
+  pixel:       { cap:'square', join:'miter',  fixed:1,    alpha:1.0,  crisp:true, label:'Pixel' }
 };
+
+function setBrushStyle(c, br, color, alpha, lw) {
+  var sz = br.fixed || lw;
+  c.fillStyle = color;
+  c.strokeStyle = color;
+  c.globalAlpha = alpha;
+  c.lineWidth = Math.max(1, sz);
+  c.lineCap = br.cap;
+  c.lineJoin = br.join;
+  c.shadowBlur = 0;
+  c.shadowColor = 'transparent';
+  c.filter = 'none';
+  if (br.crisp) c.imageSmoothingEnabled = false;
+  if (br.shadow) { c.shadowBlur = br.shadow; c.shadowColor = color; }
+}
 
 // ─── ICONS ────────────────────────
 const ICONS = {
@@ -541,54 +556,54 @@ function moveDraw(e) {
   }
   e.preventDefault();
   if (!isDrawing || (state.activeTool !== 'brush' && state.activeTool !== 'eraser')) return;
-  const p = getPos(e);
+  var p = getPos(e);
   var br = BRUSHES[state.brushType];
   var dpr = drawCanvas.width / 200;
   var dx = p.x - lastX, dy = p.y - lastY;
-  var step = Math.max(1, (br.fixed || state.brushSize * br.scale) * 0.3 * dpr);
-  if (Math.sqrt(dx*dx+dy*dy) > step) {
+  var sz = (br.fixed || state.brushSize * br.scale) * dpr * 0.5;
+  var step = Math.max(1, sz * 0.25);
+  if (Math.sqrt(dx * dx + dy * dy) > step) {
     var color = state.activeTool === 'eraser' ? '#FFFFFF' : state.activeColor;
     var alpha = (state.brushOpacity / 100) * br.alpha;
     var lw = br.fixed || (state.brushSize * br.scale * dpr);
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
     [ctx, fbCtx].forEach(function(c) {
       c.save();
-      c.globalAlpha = alpha;
-      c.strokeStyle = color;
-      c.lineCap = br.cap;
-      c.lineJoin = br.join;
-      if (br.crisp) c.imageSmoothingEnabled = false;
-      if (br.filter) c.filter = br.filter;
+      setBrushStyle(c, br, color, alpha, lw);
 
-      if (br.outer) {
-        c.lineWidth = Math.max(1, state.brushSize * br.scale * dpr);
-        c.filter = br.filter;
+      if (br.doubleStroke) {
         c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
-        c.filter = 'none';
-        c.lineWidth = Math.max(1, state.brushSize * 0.3 * dpr);
+        c.shadowBlur = 0; c.shadowColor = 'transparent';
+        c.globalAlpha = alpha > 0.6 ? alpha : 0.6;
+        c.lineWidth = Math.max(1, state.brushSize * br.innerSize * dpr);
         c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
-      } else if (br.chalk) {
-        c.lineWidth = Math.max(1, lw);
-        for (var j = 0; j < 3; j++) {
-          var jx1 = lastX + (Math.random() - 0.5) * lw;
-          var jy1 = lastY + (Math.random() - 0.5) * lw;
-          var jx2 = p.x + (Math.random() - 0.5) * lw;
-          var jy2 = p.y + (Math.random() - 0.5) * lw;
-          c.beginPath(); c.moveTo(jx1, jy1); c.lineTo(jx2, jy2); c.stroke();
+      } else if (br.jitter) {
+        var steps = Math.max(1, Math.floor(dist / (sz * 0.4)));
+        for (var j = 0; j <= steps; j++) {
+          var t = j / steps;
+          var jx = lastX + dx * t + (Math.random() - 0.5) * lw * 2;
+          var jy = lastY + dy * t + (Math.random() - 0.5) * lw * 2;
+          var jr = Math.random() * lw * 0.6 + 1;
+          c.beginPath(); c.arc(jx, jy, jr, 0, Math.PI * 2); c.fill();
         }
       } else if (br.slant) {
-        c.translate(p.x, p.y);
-        c.rotate(br.slant * Math.PI / 180);
-        c.scale(br.ratio, 1);
-        c.translate(-p.x, -p.y);
-        c.lineWidth = Math.max(1, lw);
-        c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+        var steps = Math.max(1, Math.floor(dist / (sz * 0.25)));
+        for (var j = 0; j <= steps; j++) {
+          var t = j / steps;
+          var cx = lastX + dx * t;
+          var cy = lastY + dy * t;
+          c.save();
+          c.translate(cx, cy);
+          c.rotate(br.slant * Math.PI / 180);
+          c.scale(br.ratio, 1);
+          c.beginPath(); c.arc(0, 0, sz, 0, Math.PI * 2); c.fill();
+          c.restore();
+        }
       } else {
-        c.lineWidth = Math.max(1, lw);
         c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
       }
 
-      c.filter = 'none';
-      c.globalAlpha = 1;
       c.restore();
     });
     lastX = p.x; lastY = p.y;
@@ -622,57 +637,36 @@ function drawDot(x, y) {
   var color = state.activeTool === 'eraser' ? '#FFFFFF' : state.activeColor;
   var dpr = drawCanvas.width / 200;
   var alpha = (state.brushOpacity / 100) * br.alpha;
+  var sz = (br.fixed || state.brushSize * br.scale) * dpr * 0.5;
 
   [ctx, fbCtx].forEach(function(c) {
     c.save();
-    c.globalAlpha = alpha;
-    c.fillStyle = color;
-    c.strokeStyle = color;
+    setBrushStyle(c, br, color, alpha, br.fixed || state.brushSize * br.scale * dpr);
 
     if (br.fixed) {
-      var sz = br.fixed;
-      if (br.crisp) c.imageSmoothingEnabled = false;
-      c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+      c.fillRect(x - sz, y - sz, sz * 2, sz * 2);
     } else if (br.jitter) {
-      var r = state.brushSize * br.scale * dpr * 0.5;
-      for (var j = 0; j < 8; j++) {
-        var jx = x + (Math.random() - 0.5) * r * 2;
-        var jy = y + (Math.random() - 0.5) * r * 2;
-        var jr = Math.random() * r * 0.8 + 1;
-        c.beginPath();
-        c.arc(jx, jy, jr, 0, Math.PI * 2);
-        c.fill();
+      var r2 = sz * 2;
+      for (var j = 0; j < 10; j++) {
+        var jx = x + (Math.random() - 0.5) * r2;
+        var jy = y + (Math.random() - 0.5) * r2;
+        var jr = Math.random() * sz * 0.7 + 1;
+        c.beginPath(); c.arc(jx, jy, jr, 0, Math.PI * 2); c.fill();
       }
     } else if (br.slant) {
       c.translate(x, y);
       c.rotate(br.slant * Math.PI / 180);
       c.scale(br.ratio, 1);
-      c.beginPath();
-      c.arc(0, 0, state.brushSize * br.scale * dpr * 0.5, 0, Math.PI * 2);
-      c.fill();
-    } else if (br.outer) {
-      c.filter = 'none';
-      c.beginPath();
-      c.arc(x, y, state.brushSize * 0.3 * dpr, 0, Math.PI * 2);
-      c.fill();
-      c.filter = br.filter;
-      c.beginPath();
-      c.arc(x, y, state.brushSize * br.scale * dpr * 0.5, 0, Math.PI * 2);
-      c.fill();
-      c.filter = 'none';
-    } else if (br.filter) {
-      c.filter = br.filter;
-      c.beginPath();
-      c.arc(x, y, state.brushSize * br.scale * dpr * 0.5, 0, Math.PI * 2);
-      c.fill();
-      c.filter = 'none';
+      c.beginPath(); c.arc(0, 0, sz, 0, Math.PI * 2); c.fill();
+    } else if (br.doubleStroke) {
+      c.beginPath(); c.arc(x, y, sz, 0, Math.PI * 2); c.fill();
+      c.shadowBlur = 0; c.shadowColor = 'transparent';
+      c.globalAlpha = alpha > 0.6 ? alpha : 0.6;
+      c.beginPath(); c.arc(x, y, state.brushSize * br.innerSize * dpr * 0.5, 0, Math.PI * 2); c.fill();
     } else {
-      c.beginPath();
-      c.arc(x, y, state.brushSize * br.scale * dpr * 0.5, 0, Math.PI * 2);
-      c.fill();
+      c.beginPath(); c.arc(x, y, sz, 0, Math.PI * 2); c.fill();
     }
 
-    c.globalAlpha = 1;
     c.restore();
   });
 }
