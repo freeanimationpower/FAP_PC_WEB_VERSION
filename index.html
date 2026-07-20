@@ -69,7 +69,7 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 .onion-on .ico-onion { filter:invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%); }
 
 /* TOOLBAR */
-.toolbar { background:var(--bg-primary); padding:10px 8px 6px 8px; display:flex; align-items:center; gap:2px; min-height:60px; flex-shrink:0; }
+.toolbar { background:var(--bg-primary); padding:28px 8px 4px 8px; display:flex; align-items:center; gap:2px; min-height:68px; flex-shrink:0; }
 .toolbar .logo { width:30px; height:30px; border-radius:5px; flex-shrink:0; }
 .toolbar .spacer { flex:1; }
 .toolbar .frame-counter { color:var(--text-primary); font-size:14px; font-weight:700; min-width:50px; text-align:center; flex-shrink:0; }
@@ -119,7 +119,7 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 @media (max-width:420px) {
   .phone { width:100vw; height:100dvh; height:100vh; border-radius:0; border:none; }
   body { padding:0; padding-bottom:80px; align-items:flex-start; min-height:100dvh; }
-  .toolbar { padding-top:calc(16px + env(safe-area-inset-top, 0px)); }
+  .toolbar { padding-top:calc(30px + env(safe-area-inset-top, 0px)); }
 }
 @media (min-width:1200px) { .phone { width:420px; height:900px; } }
 </style>
