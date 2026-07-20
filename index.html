@@ -136,8 +136,8 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 .tl-scroll-btn:active { background:var(--accent-light); }
 
 @media (max-width:520px) {
-  .phone { width:100vw; height:100dvh; height:100vh; border-radius:0; border:none; }
-  body { padding:0; padding-bottom:70px; align-items:flex-start; min-height:100dvh; }
+  .phone { width:100vw; height:100dvh; height:100vh; border-radius:0; border:none; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+  body { padding:0; align-items:flex-start; overflow:hidden; min-height:100dvh; }
   .toolbar { padding-top:calc(46px + env(safe-area-inset-top, 0px)); min-height:88px; }
   .toolbar .btn { width:40px; height:40px; }
   .toolbar .ico { width:22px; height:22px; }
