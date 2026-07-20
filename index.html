@@ -364,7 +364,9 @@ function loadFrame(fn) {
   }
   ctx.globalAlpha = 1;
 
-  ctx.drawImage(frameBuffer, 0, 0);
+  if (strokes[key] && strokes[key].length > 0) {
+    ctx.drawImage(frameBuffer, 0, 0);
+  }
   document.getElementById('onionIndicator').style.display = state.onionEnabled ? 'flex' : 'none';
 }
 
