@@ -345,16 +345,16 @@ function loadFrame(fn) {
   if (state.onionEnabled) {
     for (let i = 3; i > 0; i--) {
       let pn = fn - i;
-      if (pn < 0) break;
+      if (pn < 0) continue;
       const pk = `frame_${pn}`;
       if (strokes[pk] && strokes[pk].length > 0) {
         ctx.globalAlpha = 0.35 * (1 - (i-1)*0.25);
         ctx.drawImage(renderFrame(pn), 0, 0);
       }
     }
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 3; i > 0; i--) {
       let nn = fn + i;
-      if (nn >= state.totalFrames) break;
+      if (nn >= state.totalFrames) continue;
       const nk = `frame_${nn}`;
       if (strokes[nk] && strokes[nk].length > 0) {
         ctx.globalAlpha = 0.35 * (1 - (i-1)*0.25);
