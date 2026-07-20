@@ -419,7 +419,8 @@ function loadFrame(fn) {
   }
 
   ctx.globalAlpha = 1;
-  if (fc) ctx.drawImage(fc, 0, 0);
+  const currentLayer = getStrokeLayer(key);
+  if (currentLayer) ctx.drawImage(currentLayer, 0, 0);
 
   document.getElementById('onionIndicator').style.display = state.onionEnabled ? 'flex' : 'none';
 }
