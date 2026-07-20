@@ -69,15 +69,19 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 .onion-on .ico-onion { filter:invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%); }
 
 /* TOOLBAR */
-.toolbar { background:var(--bg-primary); padding:42px 8px 2px 8px; display:flex; align-items:flex-end; gap:2px; min-height:80px; flex-shrink:0; }
+.toolbar { background:var(--bg-primary); padding:42px 8px 2px 8px; display:flex; align-items:flex-end; gap:2px; min-height:80px; flex-shrink:0; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.toolbar::-webkit-scrollbar { display:none; }
 .toolbar .logo { width:30px; height:30px; border-radius:5px; flex-shrink:0; }
-.toolbar .spacer { flex:1; }
+.toolbar .spacer { flex:1; min-width:2px; }
 .toolbar .frame-counter { color:var(--text-primary); font-size:14px; font-weight:700; min-width:50px; text-align:center; flex-shrink:0; }
 .toolbar .fps-tag { color:var(--text-secondary); font-size:11px; min-width:30px; text-align:center; flex-shrink:0; }
 
 /* CANVAS */
 .canvas-area { flex:1 1 0; background:var(--bg-canvas); position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:120px; padding:12px 8px; }
-.canvas-surface { position:relative; border:1px solid var(--border-canvas); background:#fff; width:calc(100% - 16px); height:calc(100% - 16px); max-width:92%; max-height:95%; aspect-ratio:9/16; touch-action:none; }
+.canvas-surface { position:relative; border:1px solid var(--border-canvas); background:#fff; width:calc(100% - 16px); height:calc(100% - 16px); max-width:92%; max-height:95%; aspect-ratio:9/16; touch-action:none; overflow:hidden; }
+.canvas-surface.zooming { overflow:visible; }
+.canvas-surface #drawCanvas { transform-origin:0 0; transition:transform 0.08s ease-out; }
+.canvas-surface.panning #drawCanvas { transition:none; }
 .canvas-label { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.15); font-size:9px; letter-spacing:1px; text-transform:uppercase; pointer-events:none; }
 .brush-cursor { position:absolute; border-radius:50%; border:1.5px dashed rgba(0,0,0,0.5); background:rgba(0,0,0,0.06); pointer-events:none; display:none; transform:translate(-50%,-50%); }
 .onion-indicator { position:absolute; top:6px; right:6px; display:flex; gap:3px; pointer-events:none; }
@@ -121,11 +125,21 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 .tl-scroll-btn:hover { background:var(--accent); }
 .tl-scroll-btn:active { background:var(--accent-light); }
 
-@media (max-width:420px) {
+@media (max-width:520px) {
   .phone { width:100vw; height:100dvh; height:100vh; border-radius:0; border:none; }
-  body { padding:0; padding-bottom:100px; align-items:flex-start; min-height:100dvh; }
-  .toolbar { padding-top:calc(46px + env(safe-area-inset-top, 0px)); }
+  body { padding:0; padding-bottom:70px; align-items:flex-start; min-height:100dvh; }
+  .toolbar { padding-top:calc(46px + env(safe-area-inset-top, 0px)); min-height:88px; }
+  .toolbar .btn { width:40px; height:40px; }
+  .toolbar .ico { width:22px; height:22px; }
+  .toolbar .frame-counter { font-size:13px; min-width:44px; }
+  .toolbar .fps-tag { font-size:10px; min-width:26px; }
+  .tool-panel .btn { width:40px; height:40px; }
+  .tool-panel .ico { width:22px; height:22px; }
+  .color-dot { width:30px; height:30px; }
+  .frame-box { width:48px; height:48px; font-size:12px; }
+  .add-frame-box { width:46px; height:46px; }
   .tl-scroll-btn { width:44px; min-width:44px; font-size:22px; }
+  .go-start { width:34px; height:50px; }
 }
 @media (min-width:1200px) { .phone { width:420px; height:900px; } }
 </style>
@@ -182,8 +196,9 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
     <div style="width:2px;flex-shrink:0"></div>
     <div class="slider-group"><span class="slider-label">O</span><input type="range" id="opacitySlider" min="5" max="100" value="100" step="5"><span class="slider-value" id="opacityValue">100%</span></div>
     <div style="flex:1"></div>
-    <button class="btn" title="Zoom In" style="font-size:14px;color:var(--text-primary)">+</button>
-    <button class="btn" title="Zoom Out" style="font-size:16px;color:var(--text-primary)">−</button>
+    <button class="btn" id="zoomInBtn" title="Zoom In" style="font-size:14px;color:var(--text-primary)">+</button>
+    <button class="btn" id="zoomOutBtn" title="Zoom Out" style="font-size:16px;color:var(--text-primary)">−</button>
+    <button class="btn" id="zoomResetBtn" title="Reset Zoom" style="font-size:10px;color:var(--text-secondary)">1:1</button>
   </div>
 
   <!-- TIMELINE -->
@@ -203,6 +218,9 @@ const state = {
   activeColor:'#000000', brushSize:5, brushOpacity:100,
   isPlaying:false, activeTool:'brush', onionEnabled:true
 };
+
+const viewport = { zoom:1, panX:0, panY:0, minZoom:0.3, maxZoom:5 };
+let isPanning = false, panStartX = 0, panStartY = 0, panStartPanX = 0, panStartPanY = 0;
 
 // ─── ICONS ────────────────────────
 const ICONS = {
@@ -229,6 +247,24 @@ colorStrip.addEventListener('click', e => {
   renderColors();
 });
 renderColors();
+
+function applyViewport() {
+  drawCanvas.style.transform = `scale(${viewport.zoom}) translate(${viewport.panX}px,${viewport.panY}px)`;
+}
+function zoomIn() {
+  viewport.zoom = Math.min(viewport.maxZoom, viewport.zoom * 1.25);
+  applyViewport();
+}
+function zoomOut() {
+  viewport.zoom = Math.max(viewport.minZoom, viewport.zoom / 1.25);
+  applyViewport();
+}
+function resetViewport() {
+  viewport.zoom = 1;
+  viewport.panX = 0;
+  viewport.panY = 0;
+  applyViewport();
+}
 
 // ─── CANVAS ────────────────────────
 const drawCanvas = document.getElementById('drawCanvas');
@@ -299,16 +335,26 @@ function getPos(e) {
   const sy = drawCanvas.height / rect.height;
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const logicalX = (clientX - rect.left) / viewport.zoom - viewport.panX;
+  const logicalY = (clientY - rect.top) / viewport.zoom - viewport.panY;
   return {
-    x: (clientX - rect.left) * sx,
-    y: (clientY - rect.top) * sy,
+    x: logicalX * sx,
+    y: logicalY * sy,
+    clientX, clientY,
     pressure: e.touches ? (e.touches[0].force || 1) : (e.pressure || 1)
   };
 }
 
 function startDraw(e) {
   if (state.activeTool === 'hand') {
-    // Hand tool: do NOT prevent default — pass touch to browser for scrolling
+    e.preventDefault();
+    isPanning = true;
+    const p = getPos(e);
+    panStartX = p.clientX;
+    panStartY = p.clientY;
+    panStartPanX = viewport.panX;
+    panStartPanY = viewport.panY;
+    canvasSurface.classList.add('panning');
     drawCanvas.style.cursor = 'grabbing';
     return;
   }
@@ -324,7 +370,16 @@ function startDraw(e) {
 }
 
 function moveDraw(e) {
-  if (state.activeTool === 'hand') return;
+  if (isPanning) {
+    e.preventDefault();
+    const p = getPos(e);
+    const dx = (p.clientX - panStartX) / viewport.zoom;
+    const dy = (p.clientY - panStartY) / viewport.zoom;
+    viewport.panX = panStartPanX + dx;
+    viewport.panY = panStartPanY + dy;
+    applyViewport();
+    return;
+  }
   e.preventDefault();
   if (!isDrawing || (state.activeTool !== 'brush' && state.activeTool !== 'eraser')) return;
   const p = getPos(e);
@@ -340,13 +395,18 @@ function moveDraw(e) {
     lastX = p.x; lastY = p.y;
   }
   const c = document.getElementById('brushCursor');
-  c.style.left = p.x + 'px'; c.style.top = p.y + 'px'; c.style.display = 'block';
+  const sRect = canvasSurface.getBoundingClientRect();
+  c.style.left = (p.clientX - sRect.left) + 'px';
+  c.style.top = (p.clientY - sRect.top) + 'px';
+  c.style.display = 'block';
   c.style.width = state.brushSize * (drawCanvas.width / 200) + 'px';
   c.style.height = state.brushSize * (drawCanvas.width / 200) + 'px';
 }
 
 function endDraw(e) {
-  if (state.activeTool === 'hand') {
+  if (isPanning) {
+    isPanning = false;
+    canvasSurface.classList.remove('panning');
     drawCanvas.style.cursor = 'grab';
     return;
   }
@@ -439,7 +499,7 @@ function setTool(name) {
   if (name === 'hand') {
     drawCanvas.style.cursor = 'grab';
     document.getElementById('brushCursor').style.display = 'none';
-    canvasSurface.style.touchAction = 'auto';
+    canvasSurface.style.touchAction = 'none';
   } else {
     drawCanvas.style.cursor = 'crosshair';
     canvasSurface.style.touchAction = 'none';
@@ -449,6 +509,11 @@ document.getElementById('brushBtn').addEventListener('click', () => setTool('bru
 document.getElementById('eraserBtn').addEventListener('click', () => setTool('eraser'));
 document.getElementById('fillBtn').addEventListener('click', () => setTool('fill'));
 document.getElementById('handBtn').addEventListener('click', () => setTool('hand'));
+
+// ─── ZOOM ────────────────────────────
+document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+document.getElementById('zoomResetBtn').addEventListener('click', resetViewport);
 
 // ─── ONION SKIN ─────────────────────
 document.getElementById('onionBtn').addEventListener('click', function() {
