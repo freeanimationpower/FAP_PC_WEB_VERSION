@@ -100,9 +100,11 @@ Maps pressure range [0, 1] → [20%, 100%] of configured brush size. Light touch
 
 ## Features
 
-### 20 Brushes
+### 40 Brushes (20 Classic + 20 New)
 
 Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
+
+**Classic brushes (#1-20):**
 
 | # | Brush | Technique | Pressure |
 |---|-------|-----------|----------|
@@ -126,6 +128,31 @@ Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 | 18 | **Neon** | Intense glow: `shadowBlur:6` + solid core | Yes |
 | 19 | **Fur** | 7 parallel strands with jitter | Yes |
 | 20 | **Drip** | Main stroke + vertical drip drops | Yes |
+
+**New brushes (#21-40) — Desktop exclusives:**
+
+| # | Brush | Technique | Pressure |
+|---|-------|-----------|----------|
+| 21 | **Airbrush** | Random scattered dots in circular cone radius, density decays from center outward | Yes |
+| 22 | **Sand** | 25-40 fine grain 1px dots scattered in a narrow band along stroke path | Yes |
+| 23 | **Sponge** | 3-6 irregular rotated elliptical blob stamps per step | Yes |
+| 24 | **Pastel** | Chunky directional rectangles with soft edges, 2-3 per step | Yes |
+| 25 | **Gravel** | Random 3-5 vertex polygon shapes scattered along stroke path | Yes |
+| 26 | **Rake** | 5-7 parallel thin lines perpendicular to stroke direction (comb/rake effect) | Yes |
+| 27 | **Chain** | Interlocking hollow circles alternating position along stroke | Yes |
+| 28 | **Zigzag** | Angular zigzag pattern superimposed on stroke direction | Yes |
+| 29 | **Wave** | 3-phase sinusoidal waves (main + 2 offsets at ± amplitude) | Yes |
+| 30 | **Lace** | Delicate circular pattern of dots in repeating formation | Yes |
+| 31 | **Oil** | 3-layer impasto: overlapping strokes with random offset and variable alpha | Yes |
+| 32 | **Dry Brush** | Scratchy broken stroke — only draws ~55% of sample points with shallow marks | Yes |
+| 33 | **Smudge** | Wide soft blur — 4 layers of large low-opacity overlapping circles | Yes |
+| 34 | **Acrylic** | Bold opaque base + 3-5 directional short parallel texture lines | Yes |
+| 35 | **Gouache** | Flat fill circle + darker outline edge (`darkenColor(55%)`) | Yes |
+| 36 | **Sparkle** | 4-point star stamps (crossed lines + center dot), 2-3 per step | Yes |
+| 37 | **Comet** | Bright head + 5 trailing dots of decreasing size and opacity | Yes |
+| 38 | **Graffiti** | Thick stroke in selected color + darker contrasting outline (`darkenColor(30%)`) | Yes |
+| 39 | **Spiderweb** | 6-8 thin radial lines from each sample point + solid center dot | Yes |
+| 40 | **Smoke** | 5-8 expanding soft circles with increasing radius and decreasing opacity | Yes |
 
 ### Onion Skin
 
@@ -225,7 +252,7 @@ All exported files follow naming **`FAP_ANIMATION_XX.ext`**, auto-incrementing p
 ┌──────────────────────────────────────────────────────────────┐
 │ [logo] | undo redo | ◀ ▶ ■ ▶ | 0/24 + - FPS▾ | | B E G ◐ H | | S▬5px O▬100% | | + - 🔍 | gif mp4 save open │  ← unified toolbar (40px)
 ├──────────────────────────────────────────────────────────────┤
-│ ◉ ■ ◎ │ ◉ ... (20 brushes, scrollable)                       │  ← brush strip (30px)
+│ ◉ ■ ◎ │ ◉ ... (40 brushes, scrollable)                       │  ← brush strip (30px)
 ├──────────────────────────────────────────────────────────────┤
 │ ●●●●●●●●●●●●●●●●●●●●... (64 colors, scrollable)               │  ← color strip (30px)
 ├──────────────────────────────────────────────────────────────┤
@@ -280,7 +307,7 @@ FAP_PC_WEB_VERSION/
 ├── index.html          # Single-file app (HTML + CSS + JS)
 ├── README.md
 └── icons/
-    ├── brushes/        # 20 brush PNG icons
+    ├── brushes/        # 40 brush PNG icons
     └── *.png / *.svg   # 55+ UI icons (shared with mobile version)
 ```
 
