@@ -113,6 +113,8 @@ Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 
 ### 💾 Save / Load (`.fap` files)
 
+Files saved as `FREEANIMATIONPOWER_XX.fap` with sequential numbering (`01`, `02`, ...). Format:
+
 ```
 {
   "v": 1,
@@ -132,6 +134,8 @@ Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 - File input reset (`value=''`) allows re-opening the same file
 
 ### 📤 Export
+
+All exported files follow the naming convention **`FREEANIMATIONPOWER_XX.ext`**, where `XX` auto-increments from `01` to `99` per session (persists across sequential exports, resets on page reload).
 
 #### GIF
 - Custom pure-JS GIF encoder (LZW compression, global 256-color palette)
