@@ -220,6 +220,10 @@ All exported files follow naming **`FAP_ANIMATION_XX.ext`**, auto-incrementing p
 
 ## Keyboard Shortcuts
 
+A `?` button on the right side of the toolbar opens a dropdown panel with all shortcuts. Press **Esc** or click outside to close it.
+
+### Tools
+
 | Key | Action |
 |---|---|
 | **B** | Brush tool |
@@ -227,22 +231,42 @@ All exported files follow naming **`FAP_ANIMATION_XX.ext`**, auto-incrementing p
 | **G** | Fill / bucket |
 | **H** | Hand / pan |
 | **O** | Toggle onion skin |
+
+### Navigation
+
+| Key | Action |
+|---|---|
 | **Space** (tap) | Play / Pause |
 | **Space** (hold + drag) | Temporary pan (releases tool on Space up) |
 | **← →** | Previous / Next frame |
 | **Home / End** | First / Last frame |
+
+### Brush
+
+| Key | Action |
+|---|---|
 | **[ / ]** | Brush size -1 / +1 px |
-| **{ / }** | Opacity -5% / +5% (Shift+[ / ]) |
-| **1 2 3 … 9 0 - =** | Quick brush select (round→watercolor) |
+| **Shift+[ / ]** ({ / }) | Opacity -5% / +5% |
+| **1 2 3 … 9 0 - =** | Quick brush select (round → watercolor) |
+
+### Zoom
+
+| Key | Action |
+|---|---|
 | **+ / -** | Zoom in / out |
 | **Ctrl + 0** | Reset zoom |
+| **Mouse wheel** on canvas | Zoom towards cursor |
+
+### Edit & Export
+
+| Key | Action |
+|---|---|
 | **Ctrl + Z** | Undo |
 | **Ctrl + Shift + Z** | Redo |
-| **Ctrl + S** | Save project |
-| **Ctrl + O** | Open project |
+| **Ctrl + S** | Save project (.fap) |
+| **Ctrl + O** | Open project (.fap) |
 | **Ctrl + Shift + G** | Export GIF |
 | **Ctrl + Shift + V** | Export video |
-| **Mouse wheel** on canvas | Zoom towards cursor |
 
 ---
 
