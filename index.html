@@ -2,11 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>FAP Mobile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAP Desktop</title>
 <style>
+/* ===== ROOT ===== */
 :root {
   --bg-primary: #15171c;
   --bg-secondary: #1a1d24;
@@ -22,326 +21,350 @@
   --green: #4caf50;
   --green-bg: #1e3a1e;
   --green-border: #2d5a2d;
+  --toolbar-h: 40px;
+  --brush-strip-h: 30px;
+  --color-strip-h: 30px;
+  --timeline-h: 68px;
 }
-html { height:100%; overflow:hidden; }
+
+/* ===== RESET ===== */
 * { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: #0d0d10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  -webkit-user-select: none;
+  color: var(--text-primary);
   user-select: none;
-  touch-action: manipulation;
+  -webkit-user-select: none;
 }
-body::-webkit-scrollbar { width:12px; }
-body::-webkit-scrollbar-track { background:#1a1a1a; }
-body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
-.phone {
-  width: 390px;
-  height: 844px;
-  background: #0a0a0f;
-  border-radius: 36px;
-  overflow: hidden;
+
+/* ===== APP LAYOUT ===== */
+#app {
   display: flex;
   flex-direction: column;
-  border: 2px solid #222;
-  box-shadow: 0 0 0 4px #111, 0 20px 60px rgba(0,0,0,0.6);
-  touch-action: manipulation;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a0f;
 }
 
-/* BUTTON BASE */
-.btn { width:34px; height:34px; border-radius:6px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s; flex-shrink:0; padding:0; }
-.btn:hover { background:rgba(255,255,255,0.08); }
-.btn:active { background:rgba(255,255,255,0.14); transform:scale(0.92); }
-.btn:disabled { opacity:0.35; pointer-events:none; }
-.btn.active { background:rgba(255,109,0,0.2); }
-.btn.active .ico { filter:invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%); }
-.ico { width:20px; height:20px; pointer-events:none; filter:invert(0.85); }
-.ico.accent { filter:invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%); }
-.onion-on .ico-onion { filter:invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%); }
-.btn-label { flex-direction:column; gap:0; width:36px; height:auto; padding:2px; }
-.btn-label .ico { width:18px; height:18px; }
-.btn-text { color:#fff; font-size:7px; line-height:1; text-transform:uppercase; pointer-events:none; }
-
-/* TOOLBAR */
-.toolbar { background:var(--bg-primary); padding:0px 8px 0px 8px; display:flex; align-items:center; gap:2px; min-height:38px; flex-shrink:0; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none; touch-action:pan-x; flex-wrap:nowrap; }
-.toolbar::-webkit-scrollbar { display:none; }
-.toolbar>* { flex-shrink:0; }
-.toolbar .logo { width:30px; height:30px; border-radius:5px; flex-shrink:0; }
-.toolbar .spacer { flex:1; min-width:2px; }
-.toolbar .frame-counter { color:var(--text-primary); font-size:14px; font-weight:700; min-width:50px; text-align:center; flex-shrink:0; line-height:1; }
-.toolbar .fps-tag { color:var(--text-secondary); font-size:11px; min-width:30px; text-align:center; flex-shrink:0; }
-.fps-select { background:var(--bg-tertiary); color:var(--accent-light); border:1.5px solid var(--accent); border-radius:5px; font-size:11px; font-weight:700; padding:2px 22px 2px 6px; height:26px; line-height:1; outline:none; cursor:pointer; flex-shrink:0; min-width:56px; text-align:center; -webkit-appearance:none; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8'%3E%3Cpath d='M0 0l5 8 5-8z' fill='%23ffffff'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 6px center; }
-.fps-select:hover { border-color:var(--accent-light); background:#2f323a; }
-.fps-select:focus { border-color:var(--accent-light); }
-.toolbar .fps-label { color:var(--text-secondary); font-size:10px; flex-shrink:0; padding:0 1px; line-height:1; }
-.toolbar::after { content:''; position:sticky; right:0; width:16px; height:100%; flex-shrink:0; background:linear-gradient(to right,transparent,var(--bg-primary)); pointer-events:none; }
-
-/* BRUSH STRIP */
-.brush-strip { background:var(--bg-secondary); padding:3px 8px; display:flex; gap:3px; overflow-x:auto; flex-shrink:0; align-items:center; scrollbar-width:thin; flex-wrap:nowrap; }
-.brush-strip::-webkit-scrollbar { height:6px; }
-.brush-strip::-webkit-scrollbar-track { background:var(--bg-tertiary); border-radius:3px; }
-.brush-strip::-webkit-scrollbar-thumb { background:var(--accent); border-radius:3px; }
-.brush-btn { width:28px; height:28px; border-radius:5px; border:1.5px solid var(--border); background:var(--bg-tertiary); color:var(--text-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.12s; padding:0; }
-.brush-btn img { width:18px; height:18px; pointer-events:none; }
-.brush-btn span { font-size:8px; line-height:1; text-align:center; pointer-events:none; }
-.brush-btn:hover { border-color:var(--accent-light); }
-.brush-btn.active { border-color:var(--accent); background:rgba(255,109,0,0.15); color:var(--accent-light); }
-
-/* CANVAS */
-.canvas-area { flex:1 1 0; background:var(--bg-canvas); position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:120px; padding:12px 8px; }
-.canvas-surface { position:relative; border:1px solid var(--border-canvas); background:var(--bg-canvas); width:calc(100% - 16px); height:calc(100% - 16px); max-width:92%; max-height:95%; aspect-ratio:9/16; touch-action:none; overflow:hidden; }
-.canvas-surface.zooming { overflow:visible; }
-.canvas-surface #drawCanvas { transform-origin:0 0; transition:transform 0.08s ease-out; }
-.canvas-surface.panning #drawCanvas { transition:none; }
-
-.canvas-pan-btn { position:absolute; width:32px; height:32px; border-radius:6px; border:none; background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:2; backdrop-filter:blur(4px); transition:background 0.15s,color 0.15s; padding:0; }
-.canvas-pan-btn:hover { background:rgba(255,255,255,0.14); color:#fff; }
-.canvas-pan-btn:active { background:var(--accent); color:#fff; transform:scale(0.9); }
-.canvas-pan-up    { top:2px;   left:50%; transform:translateX(-50%); }
-.canvas-pan-down  { bottom:2px; left:50%; transform:translateX(-50%); }
-.canvas-pan-left  { left:2px;  top:50%; transform:translateY(-50%); }
-.canvas-pan-right { right:2px; top:50%; transform:translateY(-50%); }
-@media (max-width:520px) {
-  .canvas-pan-btn { width:36px; height:36px; font-size:18px; }
+/* ===== BUTTON BASE ===== */
+.btn {
+  width: 30px; height: 30px; border-radius: 5px; border: none;
+  background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s; flex-shrink: 0; padding: 0;
+  color: var(--text-primary);
 }
-.brush-cursor { position:absolute; border-radius:50%; border:1.5px dashed rgba(0,0,0,0.5); background:rgba(0,0,0,0.06); pointer-events:none; display:none; transform:translate(-50%,-50%); }
-.onion-indicator { position:absolute; top:6px; right:6px; display:flex; gap:3px; pointer-events:none; }
-.onion-dot { width:6px; height:6px; border-radius:50%; opacity:0.5; }
-.onion-dot.prev { background:#ff4444; }
-.onion-dot.next { background:#44ff44; }
-
-/* COLOR STRIP */
-.color-strip { background:var(--bg-secondary); padding:6px 8px; display:flex; gap:7px; overflow-x:auto; flex-shrink:0; }
-.color-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; cursor:pointer; transition:transform 0.12s,box-shadow 0.12s; border:2px solid transparent; }
-.color-dot:hover { transform:scale(1.15); }
-.color-dot.active { border-color:#fff; box-shadow:0 0 6px rgba(255,255,255,0.3); }
-.color-dot.white-dot { border:2px solid #555; }
-.color-dot.white-dot.active { border-color:var(--accent-light); }
-
-/* TOOL PANEL */
-.tool-panel { background:var(--bg-secondary); padding:6px 8px; display:flex; align-items:center; gap:2px; min-height:50px; flex-shrink:0; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none; flex-wrap:nowrap; touch-action:pan-x; }
-.tool-panel::-webkit-scrollbar { display:none; }
-.tool-panel>* { flex-shrink:0; }
-.tool-panel .slider-group { display:flex; align-items:center; gap:3px; flex-shrink:0; }
-.tool-panel .slider-label { color:var(--text-secondary); font-size:11px; width:12px; text-align:center; }
-.tool-panel input[type="range"] { -webkit-appearance:none; appearance:none; width:60px; height:4px; border-radius:2px; background:var(--border); outline:none; cursor:pointer; }
-.tool-panel input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--accent); cursor:pointer; border:1.5px solid var(--accent-light); }
-.tool-panel .slider-value { color:var(--text-primary); font-size:11px; min-width:25px; text-align:center; }
-
-/* TIMELINE */
-.timeline { background:var(--bg-timeline); padding:8px 6px; display:flex; gap:4px; overflow-x:auto; flex:1; min-height:72px; align-items:center; }
-.timeline::-webkit-scrollbar { height:14px; }
-.timeline::-webkit-scrollbar-track { background:var(--bg-tertiary); border-radius:7px; }
-.timeline::-webkit-scrollbar-thumb { background:var(--accent); border-radius:7px; }
-.timeline .go-start { width:30px; height:50px; flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); font-size:16px; background:var(--bg-tertiary); border-radius:5px; }
-.timeline .go-start:hover { color:#fff; }
-.frame-box { width:50px; height:50px; border-radius:5px; background:var(--bg-tertiary); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; transition:all 0.12s; color:var(--text-secondary); font-size:13px; }
-.frame-box:hover { border-color:var(--accent-light); }
-.frame-box.active { background:var(--accent); border-color:var(--accent-light); color:#fff; font-weight:700; box-shadow:0 0 5px rgba(255,109,0,0.4); }
-.frame-box:active { transform:scale(0.95); }
-.add-frame-box { width:48px; height:48px; border-radius:5px; background:var(--green-bg); border:1px solid var(--green-border); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; transition:all 0.12s; padding:0; }
-.add-frame-box:hover { background:#254a25; border-color:var(--green); }
-.add-frame-box:active { transform:scale(0.95); }
-
-.timeline-wrap { display:flex; align-items:stretch; flex-shrink:0; background:var(--bg-timeline); position:relative; }
-.tl-scroll-btn { width:36px; min-width:36px; background:var(--bg-tertiary); border:none; color:var(--text-primary); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
-.tl-scroll-btn:hover { background:var(--accent); }
-.tl-scroll-btn:active { background:var(--accent-light); }
-
-@media (max-width:520px) {
-  .phone { width:100%; height:calc(var(--vh, 1vh) * 100); border-radius:0; border:none; overflow:hidden; }
-  .toolbar { min-height:42px; }
-  .btn-label { width:32px; padding:1px; }
-  .btn-label .ico { width:15px; height:15px; }
-  .btn-text { font-size:6px; }
-  .ico { width:15px; height:15px; }
-  .toolbar .frame-counter { font-size:11px; min-width:36px; line-height:1; }
-  .fps-select { font-size:9px; min-width:46px; height:26px; padding:1px 16px 1px 3px; }
-  .toolbar .fps-label { font-size:8px; }
-  .toolbar::after { width:12px; height:100%; }
-  .toolbar .logo { width:22px; height:22px; }
-  .tool-panel { min-height:34px; padding:2px 4px; gap:1px; }
-  .color-strip { padding:2px 4px; gap:4px; }
-  .color-dot { width:22px; height:22px; }
-  .canvas-area { padding:4px 4px; min-height:80px; }
-  .brush-strip { padding:2px 4px; gap:2px; scrollbar-width:none; }
-  .brush-strip::-webkit-scrollbar { height:0; }
-  .brush-btn { width:24px; height:24px; }
-  .brush-btn img { width:15px; height:15px; }
-  .frame-box { width:34px; height:34px; font-size:10px; border-radius:4px; }
-  .add-frame-box { width:32px; height:32px; border-radius:4px; }
-  .tl-scroll-btn { width:30px; min-width:30px; font-size:15px; }
-  .timeline { padding:3px 2px; min-height:48px; gap:2px; }
-  .timeline-wrap { padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px)); }
-  .timeline .go-start { width:24px; height:34px; font-size:12px; }
-  .slider-group input[type="range"] { width:36px; }
-  .tool-panel .slider-label { font-size:9px; width:8px; }
-  .tool-panel .slider-value { font-size:9px; min-width:18px; }
+.btn:hover { background: rgba(255,255,255,0.08); }
+.btn:active { background: rgba(255,255,255,0.14); transform: scale(0.92); }
+.btn:disabled { opacity: 0.35; pointer-events: none; }
+.btn.active { background: rgba(255,109,0,0.2); }
+.btn.active .ico {
+  filter: invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%);
 }
-@media (min-width:1200px) { .phone { width:420px; height:900px; } }
+.ico { width: 18px; height: 18px; pointer-events: none; filter: invert(0.85); }
+.ico.accent {
+  filter: invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%);
+}
+.onion-on .ico-onion {
+  filter: invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%);
+}
+.btn-label { flex-direction: column; gap: 0; width: 34px; height: auto; padding: 1px; }
+.btn-label .ico { width: 16px; height: 16px; }
+.btn-text { color: #fff; font-size: 6px; line-height: 1; text-transform: uppercase; pointer-events: none; }
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+  background: var(--bg-primary);
+  padding: 0 10px;
+  display: flex; align-items: center; gap: 6px;
+  min-height: var(--toolbar-h); height: var(--toolbar-h);
+  flex-shrink: 0; overflow-x: auto; overflow-y: hidden;
+}
+.toolbar::-webkit-scrollbar { height: 6px; }
+.toolbar::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
+.toolbar::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+.toolbar > * { flex-shrink: 0; }
+.toolbar .logo { width: 24px; height: 24px; border-radius: 4px; }
+.toolbar .spacer { flex: 1; min-width: 4px; }
+.toolbar .frame-counter {
+  color: var(--text-primary); font-size: 13px; font-weight: 700;
+  min-width: 52px; text-align: center;
+}
+.tool-sep {
+  width: 1px; height: 20px; background: var(--border);
+  flex-shrink: 0; border-radius: 1px;
+}
+.fps-select {
+  background: var(--bg-tertiary); color: var(--accent-light);
+  border: 1.5px solid var(--accent); border-radius: 4px;
+  font-size: 10px; font-weight: 700; padding: 1px 18px 1px 3px;
+  height: 24px; outline: none; cursor: pointer; min-width: 38px;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 4px center;
+  background-color: var(--bg-tertiary);
+}
+.fps-label { color: var(--text-secondary); font-size: 9px; }
+.slider-group { display: flex; align-items: center; gap: 2px; }
+.slider-label { color: var(--text-secondary); font-size: 10px; width: 12px; text-align: center; }
+.toolbar input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 60px; height: 4px; border-radius: 2px; background: var(--border);
+  outline: none; cursor: pointer;
+}
+.toolbar input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: 1.5px solid var(--accent-light);
+}
+.slider-value { color: var(--text-primary); font-size: 10px; min-width: 24px; text-align: center; }
+
+/* ===== BRUSH STRIP ===== */
+.brush-strip {
+  background: var(--bg-secondary);
+  padding: 1px 8px;
+  display: flex; gap: 2px; overflow-x: auto; flex-shrink: 0;
+  align-items: center; flex-wrap: nowrap;
+  min-height: var(--brush-strip-h); height: var(--brush-strip-h);
+}
+.brush-strip::-webkit-scrollbar { height: 6px; }
+.brush-strip::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
+.brush-strip::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+.brush-btn {
+  width: 26px; height: 26px; border-radius: 4px;
+  border: 1.5px solid var(--border); background: var(--bg-tertiary);
+  color: var(--text-primary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.12s; padding: 0;
+}
+.brush-btn img { width: 16px; height: 16px; pointer-events: none; }
+.brush-btn span { font-size: 7px; line-height: 1; pointer-events: none; }
+.brush-btn:hover { border-color: var(--accent-light); }
+.brush-btn.active {
+  border-color: var(--accent); background: rgba(255,109,0,0.15);
+  color: var(--accent-light);
+}
+
+/* ===== COLOR STRIP ===== */
+.color-strip {
+  background: var(--bg-secondary);
+  padding: 3px 8px;
+  display: flex; gap: 5px; overflow-x: auto; flex-shrink: 0;
+  min-height: var(--color-strip-h); height: var(--color-strip-h);
+  align-items: center;
+}
+.color-strip::-webkit-scrollbar { height: 6px; }
+.color-strip::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
+.color-strip::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+.color-dot {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  cursor: pointer; transition: transform 0.12s, box-shadow 0.12s;
+  border: 2px solid transparent;
+}
+.color-dot:hover { transform: scale(1.2); }
+.color-dot.active { border-color: #fff; box-shadow: 0 0 6px rgba(255,255,255,0.4); }
+.color-dot.white-dot { border: 2px solid #555; }
+.color-dot.white-dot.active { border-color: var(--accent-light); }
+
+/* ===== CANVAS ===== */
+.canvas-area {
+  flex: 1 1 0;
+  background: var(--bg-canvas);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.canvas-surface {
+  position: relative;
+  border: 1px solid var(--border-canvas);
+  background: var(--bg-canvas);
+  touch-action: none;
+  overflow: hidden;
+}
+.canvas-surface.zooming { overflow: visible; }
+.canvas-surface #drawCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform-origin: 0 0;
+}
+.canvas-surface.panning #drawCanvas { transition: none; }
+
+.brush-cursor {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.06);
+  pointer-events: none;
+  display: none;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.onion-indicator {
+  position: absolute; top: 6px; right: 6px;
+  display: flex; gap: 3px; pointer-events: none; z-index: 2;
+}
+.onion-dot { width: 6px; height: 6px; border-radius: 50%; opacity: 0.5; }
+.onion-dot.prev { background: #ff4444; }
+.onion-dot.next { background: #44ff44; }
+
+/* ===== TIMELINE ===== */
+.timeline {
+  background: var(--bg-timeline);
+  padding: 4px 6px; display: flex; gap: 3px;
+  overflow-x: auto; flex: 1; min-height: 42px; align-items: center;
+}
+.timeline::-webkit-scrollbar { height: 6px; }
+.timeline::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
+.timeline::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+.timeline .go-start {
+  width: 26px; height: 38px; flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); font-size: 14px;
+  background: var(--bg-tertiary); border-radius: 4px;
+}
+.timeline .go-start:hover { color: #fff; background: var(--border); }
+.frame-box {
+  width: 42px; height: 38px; border-radius: 4px;
+  background: var(--bg-tertiary); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer; transition: all 0.12s;
+  color: var(--text-secondary); font-size: 11px;
+}
+.frame-box:hover { border-color: var(--accent-light); }
+.frame-box.active {
+  background: var(--accent); border-color: var(--accent-light);
+  color: #fff; font-weight: 700; box-shadow: 0 0 5px rgba(255,109,0,0.4);
+}
+.frame-box:active { transform: scale(0.95); }
+.add-frame-box {
+  width: 38px; height: 36px; border-radius: 4px;
+  background: var(--green-bg); border: 1px solid var(--green-border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer; transition: all 0.12s; padding: 0;
+}
+.add-frame-box:hover { background: #254a25; border-color: var(--green); }
+.add-frame-box:active { transform: scale(0.95); }
+.timeline-wrap {
+  display: flex; align-items: stretch; flex-shrink: 0;
+  background: var(--bg-timeline); min-height: var(--timeline-h);
+  height: var(--timeline-h);
+}
+.tl-scroll-btn {
+  width: 28px; min-width: 28px; background: var(--bg-tertiary);
+  border: none; color: var(--text-primary); font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.15s;
+}
+.tl-scroll-btn:hover { background: var(--accent); }
+.tl-scroll-btn:active { background: var(--accent-light); }
+
+/* ===== SCROLLBARS ===== */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 </style>
 </head>
 <body>
+<div id="app">
 
-<div class="phone" id="app">
+  <!-- TOOLBAR — unified bar: playback, tools, sliders, zoom, export -->
+  <div class="toolbar" id="toolbar">
+    <img class="logo" src="icons/logo.png" alt="FAP">
+    <div class="tool-sep"></div>
+    <button class="btn" data-action="undo" title="Undo (Ctrl+Z)"><img class="ico" src="icons/undo.png" alt="U"></button>
+    <button class="btn" data-action="redo" title="Redo (Ctrl+Shift+Z)"><img class="ico" src="icons/redo.png" alt="R"></button>
+    <div class="tool-sep"></div>
+    <div class="spacer"></div>
+    <button class="btn" data-action="prevFrame" title="Previous Frame (←)"><img class="ico" src="icons/previous frame.png" alt="P"></button>
+    <button class="btn" data-action="play" title="Play/Pause (Space)"><img class="ico accent" src="icons/play pause.png" alt="▶"></button>
+    <button class="btn" data-action="stop" title="Stop"><img class="ico" src="icons/stop.png" alt="■"></button>
+    <button class="btn" data-action="nextFrame" title="Next Frame (→)"><img class="ico" src="icons/next frame.png" alt="N"></button>
+    <div class="tool-sep"></div>
+    <div class="spacer"></div>
+    <span class="frame-counter" id="frameCounter">0 / 24</span>
+    <button class="btn" data-action="addFrame" title="Add Frame"><img class="ico" src="icons/add_frame.png" alt="+"></button>
+    <button class="btn" data-action="removeFrame" title="Remove Frame"><img class="ico" src="icons/remove_frame.png" alt="-"></button>
+    <span class="fps-label">FPS</span>
+    <select id="fpsSelector" class="fps-select">
+      <option value="8">8</option>
+      <option value="12">12</option>
+      <option value="24" selected>24</option>
+      <option value="30">30</option>
+      <option value="60">60</option>
+    </select>
+    <div class="tool-sep"></div>
+    <div class="spacer"></div>
+    <button class="btn active" data-action="toolBrush" title="Brush (B)"><img class="ico" src="icons/brush.png" alt="B"></button>
+    <button class="btn" data-action="toolEraser" title="Eraser (E)"><img class="ico" src="icons/eraser.png" alt="E"></button>
+    <button class="btn" data-action="toolFill" title="Fill (G)"><img class="ico" src="icons/fill.png" alt="F"></button>
+    <button class="btn onion-on" data-action="toggleOnion" title="Onion Skin (O)"><span class="ico-onion" style="color:var(--text-secondary);font-size:14px;line-height:1;pointer-events:none">◐</span></button>
+    <button class="btn" data-action="toolHand" title="Hand / Pan (H)"><img class="ico" src="icons/hand.png" alt="H"></button>
+    <div class="tool-sep"></div>
+    <div class="spacer"></div>
+    <div class="slider-group">
+      <span class="slider-label">S</span>
+      <input type="range" id="sizeSlider" min="1" max="80" value="5" step="1" title="Brush Size ([ / ])">
+      <span class="slider-value" id="sizeValue">5px</span>
+    </div>
+    <div class="slider-group">
+      <span class="slider-label">O</span>
+      <input type="range" id="opacitySlider" min="5" max="100" value="100" step="5" title="Opacity">
+      <span class="slider-value" id="opacityValue">100%</span>
+    </div>
+    <div class="tool-sep"></div>
+    <div class="spacer"></div>
+    <button class="btn" data-action="zoomIn" title="Zoom In (+)" style="font-size:14px;color:var(--text-primary)">+</button>
+    <button class="btn" data-action="zoomOut" title="Zoom Out (-)" style="font-size:16px;color:var(--text-primary)">−</button>
+    <button class="btn" data-action="zoomReset" title="Reset Zoom (Ctrl+0)"><img class="ico" src="icons/LUPA.png" alt="Z"></button>
+    <div class="tool-sep"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-label" data-action="exportGif" title="Export GIF (Ctrl+Shift+G)"><img class="ico" src="icons/export gif.png" alt="GIF"><span class="btn-text">gif</span></button>
+    <button class="btn btn-label" data-action="exportVideo" title="Export Video (Ctrl+Shift+V)"><img class="ico" src="icons/export video.png" alt="Vid"><span class="btn-text">mp4</span></button>
+    <button class="btn btn-label" data-action="saveProject" title="Save Project (Ctrl+S)"><img class="ico" src="icons/save project.png" alt="Save"><span class="btn-text">save</span></button>
+    <button class="btn btn-label" data-action="openProject" title="Open Project (Ctrl+O)"><img class="ico" src="icons/open project.png" alt="Open"><span class="btn-text">open</span></button>
+    <input type="file" id="openFileInput" accept=".fap,application/json" style="display:none">
+  </div>
 
-  <!-- CANVAS -->
+  <!-- BRUSH STRIP -->
+  <div class="brush-strip" id="brushStrip">
+    <button class="brush-btn active" data-brush="round" title="Round Brush (1)"><img src="icons/brushes/round.png" alt="1"></button>
+    <button class="brush-btn" data-brush="square" title="Square Brush (2)"><img src="icons/brushes/square.png" alt="2"></button>
+    <button class="brush-btn" data-brush="pencil" title="Pencil (3)"><img src="icons/brushes/pencil.png" alt="3"></button>
+    <button class="brush-btn" data-brush="soft" title="Soft Brush (4)"><img src="icons/brushes/soft.png" alt="4"></button>
+    <button class="brush-btn" data-brush="calligraphy" title="Calligraphy (5)"><img src="icons/brushes/calligraphy.png" alt="5"></button>
+    <button class="brush-btn" data-brush="marker" title="Marker (6)"><img src="icons/brushes/marker.png" alt="6"></button>
+    <button class="brush-btn" data-brush="ink" title="Ink (7)"><img src="icons/brushes/ink.png" alt="7"></button>
+    <button class="brush-btn" data-brush="chalk" title="Chalk (8)"><img src="icons/brushes/chalk.png" alt="8"></button>
+    <button class="brush-btn" data-brush="glow" title="Glow (9)"><img src="icons/brushes/glow.png" alt="9"></button>
+    <button class="brush-btn" data-brush="pixel" title="Pixel (0)"><img src="icons/brushes/pixel.png" alt="0"></button>
+    <button class="brush-btn" data-brush="splatter" title="Splatter (-)"><img src="icons/brushes/splatter.png" alt="-"></button>
+    <button class="brush-btn" data-brush="watercolor" title="Watercolor (=)"><img src="icons/brushes/watercolor.png" alt="="></button>
+    <button class="brush-btn" data-brush="charcoal" title="Charcoal"><img src="icons/brushes/charcoal.png" alt="C"></button>
+    <button class="brush-btn" data-brush="crayon" title="Crayon"><img src="icons/brushes/crayon.png" alt="Y"></button>
+    <button class="brush-btn" data-brush="hardEraser" title="Hard Eraser"><img src="icons/brushes/hard%20eraser.png" alt="E"></button>
+    <button class="brush-btn" data-brush="dots" title="Dots"><img src="icons/brushes/dots.png" alt="D"></button>
+    <button class="brush-btn" data-brush="hatch" title="Crosshatch"><img src="icons/brushes/crosshatch.png" alt="X"></button>
+    <button class="brush-btn" data-brush="neon" title="Neon"><img src="icons/brushes/neon.png" alt="N"></button>
+    <button class="brush-btn" data-brush="fur" title="Fur"><img src="icons/brushes/fur.png" alt="F"></button>
+    <button class="brush-btn" data-brush="drip" title="Drip"><img src="icons/brushes/drip.png" alt="p"></button>
+  </div>
+
+  <!-- COLOR STRIP -->
+  <div class="color-strip" id="colorStrip"></div>
+
+  <!-- CANVAS AREA -->
   <div class="canvas-area">
-    <div class="canvas-surface">
-      <canvas id="drawCanvas" style="width:100%;height:100%;display:block"></canvas>
+    <div class="canvas-surface" id="canvasSurface">
+      <canvas id="drawCanvas"></canvas>
       <div class="brush-cursor" id="brushCursor"></div>
       <div class="onion-indicator" id="onionIndicator">
         <div class="onion-dot prev"></div>
         <div class="onion-dot next"></div>
       </div>
     </div>
-    <button class="canvas-pan-btn canvas-pan-up" id="panUp" title="Pan up">▲</button>
-    <button class="canvas-pan-btn canvas-pan-down" id="panDown" title="Pan down">▼</button>
-    <button class="canvas-pan-btn canvas-pan-left" id="panLeft" title="Pan left">◀</button>
-    <button class="canvas-pan-btn canvas-pan-right" id="panRight" title="Pan right">▶</button>
-
-  </div>
-
-  <!-- TOOLBAR -->
-  <div class="toolbar">
-    <img class="logo" src="icons/logo.png" alt="FAP">
-    <div style="width:3px;flex-shrink:0"></div>
-    <button class="btn" id="undoBtn" title="Undo"><img class="ico" src="icons/undo.png" alt="Undo"></button>
-    <button class="btn" id="redoBtn" title="Redo"><img class="ico" src="icons/redo.png" alt="Redo"></button>
-    <div style="width:4px;flex-shrink:0"></div>
-    <button class="btn" title="Prev Frame"><img class="ico" src="icons/previous frame.png" alt="Prev"></button>
-    <button class="btn" title="Play" id="playBtn"><img class="ico accent" src="icons/play pause.png" alt="Play"></button>
-    <button class="btn" title="Stop" id="stopBtn"><img class="ico" src="icons/stop.png" alt="Stop"></button>
-    <button class="btn" title="Next Frame"><img class="ico" src="icons/next frame.png" alt="Next"></button>
-    <div class="spacer"></div>
-    <span class="frame-counter" id="frameCounter">0 / 24</span>
-    <button class="btn" title="Add Frame"><img class="ico" src="icons/add_frame.png" alt="+"></button>
-    <button class="btn" title="Remove Frame"><img class="ico" src="icons/remove_frame.png" alt="-"></button>
-    <span class="fps-label">FPS</span>
-    <select id="fpsSelector" class="fps-select">
-      <option value="8">8 fps</option>
-      <option value="12">12 fps</option>
-      <option value="24" selected>24 fps</option>
-      <option value="30">30 fps</option>
-      <option value="60">60 fps</option>
-    </select>
-    <button class="btn btn-label" id="exportGifBtn" title="Export GIF"><img class="ico" src="icons/export gif.png" alt="GIF"><span class="btn-text">gif</span></button>
-    <button class="btn btn-label" id="exportVideoBtn" title="Export Video"><img class="ico" src="icons/export video.png" alt="Video"><span class="btn-text">h264</span></button>
-    <button class="btn btn-label" id="saveProjectBtn" title="Save Project"><img class="ico" src="icons/save project.png" alt="Save"><span class="btn-text">save</span></button>
-    <button class="btn btn-label" id="openProjectBtn" title="Open Project"><img class="ico" src="icons/open project.png" alt="Open"><span class="btn-text">open</span></button>
-    <input type="file" id="openFileInput" accept=".fap,application/json" style="display:none">
-  </div>
-
-  <!-- COLOR STRIP -->
-  <div class="color-strip" id="colorStrip"></div>
-
-  <!-- BRUSH STRIP -->
-  <div class="brush-strip" id="brushStrip">
-
-    <button class="brush-btn active" data-brush="round" title="Round">
-      <img src="icons/brushes/round.png" alt="Round">
-    </button>
-
-    <button class="brush-btn" data-brush="square" title="Square">
-      <img src="icons/brushes/square.png" alt="Square">
-    </button>
-
-    <button class="brush-btn" data-brush="pencil" title="Pencil">
-      <img src="icons/brushes/pencil.png" alt="Pencil">
-    </button>
-
-    <button class="brush-btn" data-brush="soft" title="Soft">
-      <img src="icons/brushes/soft.png" alt="Soft">
-    </button>
-
-    <button class="brush-btn" data-brush="calligraphy" title="Calligraphy">
-      <img src="icons/brushes/calligraphy.png" alt="Calligraphy">
-    </button>
-
-    <button class="brush-btn" data-brush="marker" title="Marker">
-      <img src="icons/brushes/marker.png" alt="Marker">
-    </button>
-
-    <button class="brush-btn" data-brush="ink" title="Ink">
-      <img src="icons/brushes/ink.png" alt="Ink">
-    </button>
-
-    <button class="brush-btn" data-brush="chalk" title="Chalk">
-      <img src="icons/brushes/chalk.png" alt="Chalk">
-    </button>
-
-    <button class="brush-btn" data-brush="glow" title="Glow">
-      <img src="icons/brushes/glow.png" alt="Glow">
-    </button>
-
-    <button class="brush-btn" data-brush="pixel" title="Pixel">
-      <img src="icons/brushes/pixel.png" alt="Pixel">
-    </button>
-
-    <button class="brush-btn" data-brush="splatter" title="Splatter">
-      <img src="icons/brushes/splatter.png" alt="Splatter">
-    </button>
-
-    <button class="brush-btn" data-brush="watercolor" title="Watercolor">
-      <img src="icons/brushes/watercolor.png" alt="Watercolor">
-    </button>
-
-    <button class="brush-btn" data-brush="charcoal" title="Charcoal">
-      <img src="icons/brushes/charcoal.png" alt="Charcoal">
-    </button>
-
-    <button class="brush-btn" data-brush="crayon" title="Crayon">
-      <img src="icons/brushes/crayon.png" alt="Crayon">
-    </button>
-
-    <button class="brush-btn" data-brush="hardEraser" title="Hard Eraser">
-      <img src="icons/brushes/hard%20eraser.png" alt="Hard Eraser">
-    </button>
-
-    <button class="brush-btn" data-brush="dots" title="Dots">
-      <img src="icons/brushes/dots.png" alt="Dots">
-    </button>
-
-    <button class="brush-btn" data-brush="hatch" title="Crosshatch">
-      <img src="icons/brushes/crosshatch.png" alt="Crosshatch">
-    </button>
-
-    <button class="brush-btn" data-brush="neon" title="Neon">
-      <img src="icons/brushes/neon.png" alt="Neon">
-    </button>
-
-    <button class="brush-btn" data-brush="fur" title="Fur">
-      <img src="icons/brushes/fur.png" alt="Fur">
-    </button>
-
-    <button class="brush-btn" data-brush="drip" title="Drip">
-      <img src="icons/brushes/drip.png" alt="Drip">
-    </button>
-
-  </div>
-
-  <!-- TOOL PANEL -->
-  <div class="tool-panel">
-    <button class="btn active" id="brushBtn" title="Brush"><img class="ico" src="icons/brush.png" alt="Brush"></button>
-    <button class="btn" id="eraserBtn" title="Eraser"><img class="ico" src="icons/eraser.png" alt="Eraser"></button>
-    <button class="btn" id="fillBtn" title="Fill"><img class="ico" src="icons/fill.png" alt="Fill"></button>
-    <button class="btn onion-on" id="onionBtn" title="Onion Skin"><span class="ico-onion" style="color:#a0a8b0;font-size:16px;line-height:1;pointer-events:none">◐</span></button>
-    <button class="btn" id="handBtn" title="Hand / Pan"><img class="ico" src="icons/hand.png" alt="Hand"></button>
-    <div style="width:4px;flex-shrink:0"></div>
-    <div class="slider-group"><span class="slider-label">S</span><input type="range" id="sizeSlider" min="1" max="80" value="5" step="1"><span class="slider-value" id="sizeValue">5px</span></div>
-    <div style="width:2px;flex-shrink:0"></div>
-    <div class="slider-group"><span class="slider-label">O</span><input type="range" id="opacitySlider" min="5" max="100" value="100" step="5"><span class="slider-value" id="opacityValue">100%</span></div>
-    <div style="flex:1"></div>
-    <button class="btn" id="zoomInBtn" title="Zoom In" style="font-size:14px;color:var(--text-primary)">+</button>
-    <button class="btn" id="zoomOutBtn" title="Zoom Out" style="font-size:16px;color:var(--text-primary)">−</button>
-    <button class="btn" id="zoomResetBtn" title="Reset Zoom"><img class="ico" src="icons/LUPA.png" alt="Zoom"></button>
   </div>
 
   <!-- TIMELINE -->
@@ -354,44 +377,27 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
 </div>
 
 <script>
-(function setVH() {
-  document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-  window.addEventListener('resize', function() {
-    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-  });
-  window.addEventListener('orientationchange', function() {
-    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-  });
-})();
-const COLORS = [
-  "#000000","#FFFFFF",
-  "#FF3333","#DC143C","#FF1493","#FF00FF","#C71585","#FF44AA","#FF69B4","#8B008B",
-  "#FF8800","#FF4500","#FF8C00","#CD853F","#8B5E3C",
-  "#FFDD00","#FFD700","#DAA520",
-  "#33CC33","#00FF00","#7FFF00","#00FF7F","#228B22","#2E8B57",
-  "#00CCCC","#00FFFF","#008080",
-  "#3388FF","#1E90FF","#4682B4","#8833FF","#4B0082",
-  "#999999","#696969"
-];
-
+// ===== STATE =====
 const state = {
-  currentFrame:0, totalFrames:24, fps:24,
-  activeColor:'#000000', brushSize:5, brushOpacity:100,
-  isPlaying:false, activeTool:'brush', onionEnabled:true,
-  brushType:'round'
+  currentFrame: 0, totalFrames: 24, fps: 24,
+  activeColor: '#000000', brushSize: 5, brushOpacity: 100,
+  isPlaying: false, activeTool: 'brush', onionEnabled: true,
+  brushType: 'round'
 };
 
-const viewport = { zoom:1, panX:0, panY:0, minZoom:0.3, maxZoom:5 };
+const viewport = { zoom: 1, panX: 0, panY: 0, minZoom: 0.15, maxZoom: 64 };
 let isPanning = false, panStartX = 0, panStartY = 0, panStartPanX = 0, panStartPanY = 0;
-var exportCounter = 0;
+let isDrawing = false, lastX = 0, lastY = 0, lastPressure = 0.5;
+let spaceHeld = false, spaceDidPan = false, preSpaceTool = null;
+let exportCounter = 0;
 
 function nextExportName(ext) {
   exportCounter++;
   var num = exportCounter < 10 ? '0' + exportCounter : '' + exportCounter;
-  return 'FREEANIMATIONPOWER_' + num + '.' + ext;
+  return 'FAP_ANIMATION_' + num + '.' + ext;
 }
 
-// ─── BRUSHES ────────────────────────
+// ===== BRUSHES =====
 const BRUSHES = {
   round:       { cap:'round',  join:'round',  scale:1.0,  alpha:1.0,  label:'Round' },
   square:      { cap:'square', join:'miter',  scale:1.0,  alpha:1.0,  label:'Square' },
@@ -430,34 +436,43 @@ function setBrushStyle(c, br, color, alpha, lw) {
   if (br.shadow) { c.shadowBlur = br.shadow; c.shadowColor = color; }
 }
 
-// ─── ICONS ────────────────────────
-const ICONS = {
-  undo: 'icons/undo.png', redo: 'icons/redo.png',
-  prev: 'icons/previous frame.png', play: 'icons/play pause.png',
-  stop: 'icons/stop.png', next: 'icons/next frame.png',
-  add: 'icons/add_frame.png', remove: 'icons/remove_frame.png',
-  brush: 'icons/brush.png', eraser: 'icons/eraser.png',
-  fill: 'icons/fill.png', hand: 'icons/hand.png',
-  logo: 'icons/logo.png'
-};
+// ===== COLORS =====
+const COLORS = [
+  "#000000","#FFFFFF",
+  "#FF3333","#DC143C","#FF1493","#FF00FF","#C71585","#FF44AA","#FF69B4","#8B008B",
+  "#FF8800","#FF4500","#FF8C00","#CD853F","#8B5E3C",
+  "#FFDD00","#FFD700","#DAA520",
+  "#33CC33","#00FF00","#7FFF00","#00FF7F","#228B22","#2E8B57",
+  "#00CCCC","#00FFFF","#008080",
+  "#3388FF","#1E90FF","#4682B4","#8833FF","#4B0082",
+  "#999999","#696969",
+  // Ultra fluor / neon
+  "#FF006E","#FF004D","#FF5500","#FFAA00","#CCFF00",
+  "#39FF14","#00FFAA","#00D4FF","#0AFFEF","#00FFCC",
+  "#7B00FF","#BF00FF","#9933FF","#6A00FF","#FF47B0",
+  "#FF55CC","#FFB3DE","#FF007F","#FF3366","#FF7700",
+  "#F0FF00","#8DFF33","#50FF50","#7DF9FF","#87CEEB",
+  "#FFAF00","#AAFF00","#FF00DD","#FF6A00","#00BFFF",
+  "#CC0000","#0066CC"
+];
 
-// ─── COLORS ────────────────────────
 const colorStrip = document.getElementById('colorStrip');
 function renderColors() {
-  colorStrip.innerHTML = COLORS.map(c =>
-    `<div class="color-dot${c==='#FFFFFF'?' white-dot':''}${c===state.activeColor?' active':''}" style="background:${c}" data-color="${c}"></div>`
-  ).join('');
+  colorStrip.innerHTML = COLORS.map(function(c) {
+    return '<div class="color-dot' + (c === '#FFFFFF' ? ' white-dot' : '') + (c === state.activeColor ? ' active' : '') + '" style="background:' + c + '" data-color="' + c + '"></div>';
+  }).join('');
 }
-colorStrip.addEventListener('click', e => {
-  const dot = e.target.closest('.color-dot');
+colorStrip.addEventListener('click', function(e) {
+  var dot = e.target.closest('.color-dot');
   if (!dot) return;
   state.activeColor = dot.dataset.color;
   renderColors();
 });
 renderColors();
 
+// ===== VIEWPORT =====
 function applyViewport() {
-  drawCanvas.style.transform = `scale(${viewport.zoom}) translate(${viewport.panX}px,${viewport.panY}px)`;
+  drawCanvas.style.transform = 'scale(' + viewport.zoom + ') translate(' + viewport.panX + 'px,' + viewport.panY + 'px)';
 }
 function zoomIn() {
   viewport.zoom = Math.min(viewport.maxZoom, viewport.zoom * 1.25);
@@ -473,25 +488,18 @@ function resetViewport() {
   viewport.panY = 0;
   applyViewport();
 }
-function panViewport(dx, dy) {
-  viewport.panX += dx;
-  viewport.panY += dy;
-  applyViewport();
-}
-const PAN_STEP = 80;
 
-// ─── CANVAS ────────────────────────
+// ===== CANVAS SETUP =====
 const drawCanvas = document.getElementById('drawCanvas');
-const canvasSurface = drawCanvas.parentElement;
+const canvasSurface = document.getElementById('canvasSurface');
 const ctx = drawCanvas.getContext('2d');
 const frameBuffer = document.createElement('canvas');
 const fbCtx = frameBuffer.getContext('2d');
-let isDrawing = false, lastX = 0, lastY = 0;
 
-const frameCanvases = {};
-const strokeCanvases = {};
-const undoStacks = {};
-const redoStacks = {};
+let frameCanvases = {};
+let strokeCanvases = {};
+let undoStacks = {};
+let redoStacks = {};
 const MAX_UNDO = 30;
 const storage = { tmp: document.createElement('canvas') };
 
@@ -504,52 +512,77 @@ function ensureFrameCanvas(key) {
 }
 
 function clearAllFrameData() {
-  for (const k in frameCanvases) delete frameCanvases[k];
-  for (const k in strokeCanvases) delete strokeCanvases[k];
-  for (const k in undoStacks) delete undoStacks[k];
-  for (const k in redoStacks) delete redoStacks[k];
+  for (var k in frameCanvases) delete frameCanvases[k];
+  for (var k in strokeCanvases) delete strokeCanvases[k];
+  for (var k in undoStacks) delete undoStacks[k];
+  for (var k in redoStacks) delete redoStacks[k];
 }
 
-function resizeCanvas() {
-  const w = drawCanvas.parentElement.clientWidth;
-  const h = drawCanvas.parentElement.clientHeight;
-  if (drawCanvas.width !== w || drawCanvas.height !== h) {
-    drawCanvas.width = w;
-    drawCanvas.height = h;
-    frameBuffer.width = w;
-    frameBuffer.height = h;
-    storage.tmp.width = w;
-    storage.tmp.height = h;
+const CANVAS_W = 1920;
+const CANVAS_H = 1080;
+
+function initCanvasSize() {
+  if (drawCanvas.width !== CANVAS_W || drawCanvas.height !== CANVAS_H) {
+    drawCanvas.width = CANVAS_W;
+    drawCanvas.height = CANVAS_H;
+    frameBuffer.width = CANVAS_W;
+    frameBuffer.height = CANVAS_H;
+    storage.tmp.width = CANVAS_W;
+    storage.tmp.height = CANVAS_H;
     clearAllFrameData();
     loadFrame(state.currentFrame);
   }
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+initCanvasSize();
+
+function fitCanvasSurface() {
+  var area = canvasSurface.parentElement;
+  var aw = area.clientWidth;
+  var ah = area.clientHeight;
+  var w, h;
+  if (aw / ah > 1920 / 1080) {
+    h = ah;
+    w = h * (1920 / 1080);
+  } else {
+    w = aw;
+    h = w * (1080 / 1920);
+  }
+  w = Math.floor(w);
+  h = Math.floor(h);
+  if (canvasSurface._lastW !== w || canvasSurface._lastH !== h) {
+    canvasSurface.style.width = w + 'px';
+    canvasSurface.style.height = h + 'px';
+    canvasSurface._lastW = w;
+    canvasSurface._lastH = h;
+  }
+}
+fitCanvasSurface();
+window.addEventListener('resize', fitCanvasSurface);
 
 function exportFrame(fn) {
-  const fc = frameCanvases[`frame_${fn}`];
+  var fc = frameCanvases['frame_' + fn];
   if (fc) return fc;
-  const c = document.createElement('canvas');
+  var c = document.createElement('canvas');
   c.width = drawCanvas.width; c.height = drawCanvas.height;
-  const oc = c.getContext('2d');
+  var oc = c.getContext('2d');
   oc.fillStyle = '#FFFFFF';
   oc.fillRect(0, 0, c.width, c.height);
   return c;
 }
 
+// ===== STROKE LAYER (onion skin) =====
 function getStrokeLayer(key) {
   if (strokeCanvases[key]) return strokeCanvases[key];
-  const fc = frameCanvases[key];
+  var fc = frameCanvases[key];
   if (!fc) return null;
-  const w = fc.width, h = fc.height;
+  var w = fc.width, h = fc.height;
   strokeCanvases[key] = document.createElement('canvas');
   strokeCanvases[key].width = w;
   strokeCanvases[key].height = h;
-  const scCtx = strokeCanvases[key].getContext('2d');
-  const imgData = fc.getContext('2d').getImageData(0, 0, w, h);
-  const pixels = imgData.data;
-  for (let i = 0; i < pixels.length; i += 4) {
+  var scCtx = strokeCanvases[key].getContext('2d');
+  var imgData = fc.getContext('2d').getImageData(0, 0, w, h);
+  var pixels = imgData.data;
+  for (var i = 0; i < pixels.length; i += 4) {
     if (pixels[i] > 250 && pixels[i + 1] > 250 && pixels[i + 2] > 250) {
       pixels[i + 3] = 0;
     }
@@ -560,10 +593,10 @@ function getStrokeLayer(key) {
 
 function tintAndDraw(dstCtx, sourceCanvas, tintColor, alpha) {
   if (!sourceCanvas) return;
-  const w = sourceCanvas.width, h = sourceCanvas.height;
+  var w = sourceCanvas.width, h = sourceCanvas.height;
   storage.tmp.width = w;
   storage.tmp.height = h;
-  const tc = storage.tmp.getContext('2d');
+  var tc = storage.tmp.getContext('2d');
   tc.clearRect(0, 0, w, h);
   tc.drawImage(sourceCanvas, 0, 0);
   tc.globalCompositeOperation = 'source-atop';
@@ -574,13 +607,14 @@ function tintAndDraw(dstCtx, sourceCanvas, tintColor, alpha) {
   dstCtx.drawImage(storage.tmp, 0, 0);
 }
 
+// ===== LOAD FRAME =====
 function loadFrame(fn) {
-  const key = `frame_${fn}`;
+  var key = 'frame_' + fn;
 
   fbCtx.clearRect(0, 0, frameBuffer.width, frameBuffer.height);
   fbCtx.fillStyle = '#FFFFFF';
   fbCtx.fillRect(0, 0, frameBuffer.width, frameBuffer.height);
-  const fc = frameCanvases[key];
+  var fc = frameCanvases[key];
   if (fc) fbCtx.drawImage(fc, 0, 0);
 
   ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
@@ -588,44 +622,45 @@ function loadFrame(fn) {
   ctx.fillRect(0, 0, drawCanvas.width, drawCanvas.height);
 
   if (state.onionEnabled) {
-    for (let i = 3; i > 0; i--) {
-      const pn = fn - i;
+    for (var i = 3; i > 0; i--) {
+      var pn = fn - i;
       if (pn < 0) continue;
-      const layer = getStrokeLayer(`frame_${pn}`);
+      var layer = getStrokeLayer('frame_' + pn);
       if (layer) tintAndDraw(ctx, layer, '#FF4444', 0.35 * (1 - (i - 1) * 0.25));
     }
-    for (let i = 3; i > 0; i--) {
-      const nn = fn + i;
+    for (var i = 3; i > 0; i--) {
+      var nn = fn + i;
       if (nn >= state.totalFrames) continue;
-      const layer = getStrokeLayer(`frame_${nn}`);
+      var layer = getStrokeLayer('frame_' + nn);
       if (layer) tintAndDraw(ctx, layer, '#44FF44', 0.35 * (1 - (i - 1) * 0.25));
     }
   }
 
   ctx.globalAlpha = 1;
-  const currentLayer = getStrokeLayer(key);
+  var currentLayer = getStrokeLayer(key);
   if (currentLayer) ctx.drawImage(currentLayer, 0, 0);
 
   document.getElementById('onionIndicator').style.display = state.onionEnabled ? 'flex' : 'none';
 }
 
+// ===== INPUT — POSITION =====
 function getPos(e) {
-  const rect = drawCanvas.getBoundingClientRect();
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  var rect = drawCanvas.getBoundingClientRect();
   return {
-    x: (clientX - rect.left) * (drawCanvas.width / rect.width),
-    y: (clientY - rect.top) * (drawCanvas.height / rect.height),
-    clientX, clientY,
-    pressure: e.touches ? (e.touches[0].force || 1) : (e.pressure || 1)
+    x: (e.clientX - rect.left) * (drawCanvas.width / rect.width),
+    y: (e.clientY - rect.top) * (drawCanvas.height / rect.height),
+    clientX: e.clientX,
+    clientY: e.clientY,
+    pressure: e.pressure || 0.5
   };
 }
 
+// ===== INPUT — START DRAW =====
 function startDraw(e) {
   if (state.activeTool === 'hand') {
     e.preventDefault();
     isPanning = true;
-    const p = getPos(e);
+    var p = getPos(e);
     panStartX = p.clientX;
     panStartY = p.clientY;
     panStartPanX = viewport.panX;
@@ -635,195 +670,198 @@ function startDraw(e) {
     return;
   }
   e.preventDefault();
-  const p = getPos(e);
+  var p = getPos(e);
   if (state.activeTool === 'fill') {
     floodFill(p.x, p.y);
     return;
   }
   isDrawing = true;
+  lastPressure = p.pressure;
   lastX = p.x; lastY = p.y;
-  drawDot(p.x, p.y);
+  drawDot(p.x, p.y, p.pressure);
 }
 
+// ===== INPUT — MOVE DRAW =====
 function moveDraw(e) {
   if (isPanning) {
+    if (spaceHeld) spaceDidPan = true;
     e.preventDefault();
-    const p = getPos(e);
-    const dx = (p.clientX - panStartX) / viewport.zoom;
-    const dy = (p.clientY - panStartY) / viewport.zoom;
-    viewport.panX = panStartPanX + dx;
-    viewport.panY = panStartPanY + dy;
+    var pp = getPos(e);
+    var dxp = (pp.clientX - panStartX) / viewport.zoom;
+    var dyp = (pp.clientY - panStartY) / viewport.zoom;
+    viewport.panX = panStartPanX + dxp;
+    viewport.panY = panStartPanY + dyp;
     applyViewport();
     return;
   }
   e.preventDefault();
   if (!isDrawing || (state.activeTool !== 'brush' && state.activeTool !== 'eraser')) return;
-  var p = getPos(e);
-  var br = BRUSHES[state.brushType];
-  var dpr = drawCanvas.width / 200;
-  var dx = p.x - lastX, dy = p.y - lastY;
-  var sz = (br.fixed || state.brushSize * br.scale) * dpr * 0.5;
-  var step = Math.max(1, sz * 0.25);
-  if (Math.sqrt(dx * dx + dy * dy) > step) {
+
+  var events = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+
+  for (var ei = 0; ei < events.length; ei++) {
+    var ev = events[ei];
+    var p = getPos(ev);
+    var pressure = p.pressure;
+    lastPressure = lastPressure * 0.3 + pressure * 0.7;
+    var pressureScale = 0.2 + lastPressure * 0.8;
+
+    var br = BRUSHES[state.brushType];
+    var dpr = drawCanvas.width / 200;
     var color = state.activeTool === 'eraser' ? '#FFFFFF' : state.activeColor;
     var alpha = (state.brushOpacity / 100) * br.alpha;
-    var lw = br.fixed || (state.brushSize * br.scale * dpr);
+    var lw = br.fixed || (state.brushSize * br.scale * pressureScale * dpr);
+    var dx = p.x - lastX, dy = p.y - lastY;
+    var sz = (br.fixed || state.brushSize * br.scale * pressureScale) * dpr * 0.5;
+    var step = Math.max(1, sz * 0.25);
     var dist = Math.sqrt(dx * dx + dy * dy);
 
-    [ctx, fbCtx].forEach(function(c) {
-      c.save();
-      setBrushStyle(c, br, color, alpha, lw);
+    if (dist > step) {
 
-      if (br.splat) {
-        var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var sx = lastX + dx * t;
-          var sy = lastY + dy * t;
-          var count = 3 + Math.floor(Math.random() * 4);
-          for (var k = 0; k < count; k++) {
-            var ang = Math.random() * Math.PI * 2;
-            var rd = Math.random() * sz * 3;
-            var sx2 = sx + Math.cos(ang) * rd;
-            var sy2 = sy + Math.sin(ang) * rd;
-            var sr = Math.random() * sz * 0.5 + 0.5;
-            c.beginPath(); c.arc(sx2, sy2, sr, 0, Math.PI * 2); c.fill();
-          }
-        }
-      } else if (br.water) {
-        var layers = [1.0, 0.7, 0.4];
-        for (var L = 0; L < layers.length; L++) {
-          c.globalAlpha = alpha * layers[L] * 0.5;
-          c.lineWidth = Math.max(1, lw * (1.5 - L * 0.3));
-          var wx = lastX + (Math.random() - 0.5) * lw;
-          var wy = lastY + (Math.random() - 0.5) * lw;
-          c.beginPath(); c.moveTo(wx, wy);
-          c.lineTo(p.x + (Math.random() - 0.5) * lw, p.y + (Math.random() - 0.5) * lw);
-          c.stroke();
-        }
-      } else if (br.charcoal) {
-        var steps = Math.max(1, Math.floor(dist / (sz * 0.35)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var cx = lastX + dx * t + (Math.random() - 0.5) * sz * 6;
-          var cy = lastY + dy * t + (Math.random() - 0.5) * sz * 6;
-          var cs = Math.random() * sz * 0.5 + 0.5;
-          c.globalAlpha = alpha * (0.15 + Math.random() * 0.85);
-          c.fillRect(cx - cs, cy - cs, cs * 2, cs * 2);
-        }
-      } else if (br.crayon) {
-        c.lineWidth = Math.max(1, lw);
-        c.beginPath(); c.moveTo(lastX + (Math.random() - 0.5) * lw * 0.8, lastY + (Math.random() - 0.5) * lw * 0.8);
-        c.lineTo(p.x + (Math.random() - 0.5) * lw * 0.8, p.y + (Math.random() - 0.5) * lw * 0.8);
-        c.stroke();
-      } else if (br.hardErase) {
-        var steps = Math.max(1, Math.floor(dist / (sz * 1.5)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var ex = lastX + dx * t - sz;
-          var ey = lastY + dy * t - sz;
-          c.fillRect(ex, ey, sz * 2, sz * 2);
-        }
-      } else if (br.dots) {
-        var spacing = lw * 2.5;
-        var steps = Math.max(1, Math.floor(dist / spacing));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var dx2 = lastX + dx * t;
-          var dy2 = lastY + dy * t;
-          c.beginPath(); c.arc(dx2, dy2, sz * 0.6, 0, Math.PI * 2); c.fill();
-        }
-      } else if (br.hatch) {
-        var steps = Math.max(1, Math.floor(dist / (sz * 2)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var hx = lastX + dx * t;
-          var hy = lastY + dy * t;
-          c.save();
-          c.translate(hx, hy);
-          c.rotate(Math.PI / 4);
-          c.fillRect(-sz * 0.3, -sz * 1.2, sz * 0.6, sz * 2.4);
-          c.rotate(Math.PI / 2);
-          c.fillRect(-sz * 0.3, -sz * 1.2, sz * 0.6, sz * 2.4);
-          c.restore();
-        }
-      } else if (br.fur) {
-        var w = sz * 1.5;
-        var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var fx = lastX + dx * t;
-          var fy = lastY + dy * t;
-          for (var h = 0; h < 7; h++) {
-            var fy2 = fy - w + h * (w * 2) / 6 + (Math.random() - 0.5) * sz * 3;
-            var fx2 = fx + (Math.random() - 0.5) * sz * 2;
-            c.beginPath(); c.arc(fx2, fy2, sz * 0.35, 0, Math.PI * 2); c.fill();
-          }
-        }
-      } else if (br.drip) {
-        c.lineWidth = Math.max(1, lw);
-        c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
-        var dripChance = dist / (sz * 15);
-        if (Math.random() < dripChance * 0.3) {
-          var midX = lastX + dx * 0.5;
-          var midY = lastY + dy * 0.5;
-          c.beginPath(); c.moveTo(midX, midY);
-          c.lineTo(midX + (Math.random() - 0.5) * sz, midY + sz * (2 + Math.random() * 3));
-          c.stroke();
-        }
-      } else if (br.doubleStroke) {
-        c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
-        c.shadowBlur = 0; c.shadowColor = 'transparent';
-        c.globalAlpha = alpha > 0.6 ? alpha : 0.6;
-        c.lineWidth = Math.max(1, state.brushSize * br.innerSize * dpr);
-        c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
-      } else if (br.jitter) {
-        var steps = Math.max(1, Math.floor(dist / (sz * 0.4)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var jx = lastX + dx * t + (Math.random() - 0.5) * lw * 2;
-          var jy = lastY + dy * t + (Math.random() - 0.5) * lw * 2;
-          var jr = Math.random() * lw * 0.6 + 1;
-          c.beginPath(); c.arc(jx, jy, jr, 0, Math.PI * 2); c.fill();
-        }
-      } else if (br.slant) {
-        var steps = Math.max(1, Math.floor(dist / (sz * 0.25)));
-        for (var j = 0; j <= steps; j++) {
-          var t = j / steps;
-          var cx = lastX + dx * t;
-          var cy = lastY + dy * t;
-          c.save();
-          c.translate(cx, cy);
-          c.rotate(br.slant * Math.PI / 180);
-          c.scale(br.ratio, 1);
-          c.beginPath(); c.arc(0, 0, sz, 0, Math.PI * 2); c.fill();
-          c.restore();
-        }
-      } else {
-        c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+      var effSlant = br.slant;
+      var effRatio = br.ratio;
+      if (br.slant && ev.tiltX !== undefined && ev.tiltY !== undefined && ev.tiltX !== 0 && ev.tiltY !== 0) {
+        effSlant = Math.atan2(ev.tiltY, ev.tiltX) * 180 / Math.PI;
       }
 
-      c.restore();
-    });
-    lastX = p.x; lastY = p.y;
+      [ctx, fbCtx].forEach(function(c) {
+        c.save();
+        setBrushStyle(c, br, color, alpha, lw);
+
+        if (br.splat) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var sx = lastX + dx * t;
+            var sy = lastY + dy * t;
+            var count = 3 + Math.floor(Math.random() * 4);
+            for (var k = 0; k < count; k++) {
+              var ang = Math.random() * Math.PI * 2;
+              var rd = Math.random() * sz * 3;
+              c.beginPath(); c.arc(sx + Math.cos(ang) * rd, sy + Math.sin(ang) * rd, Math.random() * sz * 0.5 + 0.5, 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.water) {
+          var layers = [1.0, 0.7, 0.4];
+          for (var L = 0; L < layers.length; L++) {
+            c.globalAlpha = alpha * layers[L] * 0.5;
+            c.lineWidth = Math.max(1, lw * (1.5 - L * 0.3));
+            c.beginPath(); c.moveTo(lastX + (Math.random() - 0.5) * lw, lastY + (Math.random() - 0.5) * lw);
+            c.lineTo(p.x + (Math.random() - 0.5) * lw, p.y + (Math.random() - 0.5) * lw);
+            c.stroke();
+          }
+        } else if (br.charcoal) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.35)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var cx = lastX + dx * t + (Math.random() - 0.5) * sz * 6;
+            var cy = lastY + dy * t + (Math.random() - 0.5) * sz * 6;
+            c.globalAlpha = alpha * (0.15 + Math.random() * 0.85);
+            c.fillRect(cx - Math.random() * sz * 0.5 - 0.5, cy - Math.random() * sz * 0.5 - 0.5, Math.random() * sz + 1, Math.random() * sz + 1);
+          }
+        } else if (br.crayon) {
+          c.lineWidth = Math.max(1, lw);
+          c.beginPath(); c.moveTo(lastX + (Math.random() - 0.5) * lw * 0.8, lastY + (Math.random() - 0.5) * lw * 0.8);
+          c.lineTo(p.x + (Math.random() - 0.5) * lw * 0.8, p.y + (Math.random() - 0.5) * lw * 0.8);
+          c.stroke();
+        } else if (br.hardErase) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 1.5)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var ex = lastX + dx * t - sz, ey = lastY + dy * t - sz;
+            c.fillRect(ex, ey, sz * 2, sz * 2);
+          }
+        } else if (br.dots) {
+          var spacing = lw * 2.5;
+          var steps = Math.max(1, Math.floor(dist / spacing));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            c.beginPath(); c.arc(lastX + dx * t, lastY + dy * t, sz * 0.6, 0, Math.PI * 2); c.fill();
+          }
+        } else if (br.hatch) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 2)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var hx = lastX + dx * t, hy = lastY + dy * t;
+            c.save(); c.translate(hx, hy);
+            c.rotate(Math.PI / 4);
+            c.fillRect(-sz * 0.3, -sz * 1.2, sz * 0.6, sz * 2.4);
+            c.rotate(Math.PI / 2);
+            c.fillRect(-sz * 0.3, -sz * 1.2, sz * 0.6, sz * 2.4);
+            c.restore();
+          }
+        } else if (br.fur) {
+          var w = sz * 1.5;
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var fx = lastX + dx * t, fy = lastY + dy * t;
+            for (var h = 0; h < 7; h++) {
+              c.beginPath(); c.arc(fx + (Math.random() - 0.5) * sz * 2, fy - w + h * (w * 2) / 6 + (Math.random() - 0.5) * sz * 3, sz * 0.35, 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.drip) {
+          c.lineWidth = Math.max(1, lw);
+          c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+          if (Math.random() < (dist / (sz * 15)) * 0.3) {
+            var midX = lastX + dx * 0.5, midY = lastY + dy * 0.5;
+            c.beginPath(); c.moveTo(midX, midY);
+            c.lineTo(midX + (Math.random() - 0.5) * sz, midY + sz * (2 + Math.random() * 3));
+            c.stroke();
+          }
+        } else if (br.doubleStroke) {
+          c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+          c.shadowBlur = 0; c.shadowColor = 'transparent';
+          c.globalAlpha = alpha > 0.6 ? alpha : 0.6;
+          c.lineWidth = Math.max(1, state.brushSize * br.innerSize * pressureScale * dpr);
+          c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+        } else if (br.jitter) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.4)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            c.beginPath(); c.arc(lastX + dx * t + (Math.random() - 0.5) * lw * 2, lastY + dy * t + (Math.random() - 0.5) * lw * 2, Math.random() * lw * 0.6 + 1, 0, Math.PI * 2); c.fill();
+          }
+        } else if (br.slant) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.25)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            c.save(); c.translate(lastX + dx * t, lastY + dy * t);
+            c.rotate(effSlant * Math.PI / 180);
+            c.scale(effRatio, 1);
+            c.beginPath(); c.arc(0, 0, sz, 0, Math.PI * 2); c.fill();
+            c.restore();
+          }
+        } else {
+          c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+        }
+
+        c.restore();
+      });
+      lastX = p.x; lastY = p.y;
+    }
   }
-  const c = document.getElementById('brushCursor');
-  const sRect = canvasSurface.getBoundingClientRect();
-  c.style.left = (p.clientX - sRect.left) + 'px';
-  c.style.top = (p.clientY - sRect.top) + 'px';
+
+  // Update cursor
+  var c = document.getElementById('brushCursor');
+  var sRect = canvasSurface.getBoundingClientRect();
+  var lastEv = events[events.length - 1];
+  var cp = getPos(lastEv);
+  c.style.left = (cp.clientX - sRect.left) + 'px';
+  c.style.top = (cp.clientY - sRect.top) + 'px';
   c.style.display = 'block';
-  c.style.width = state.brushSize * (drawCanvas.width / 200) + 'px';
-  c.style.height = state.brushSize * (drawCanvas.width / 200) + 'px';
+  var cs = state.brushSize * (0.2 + lastPressure * 0.8);
+  c.style.width = cs * (drawCanvas.width / 200) + 'px';
+  c.style.height = cs * (drawCanvas.width / 200) + 'px';
 }
 
+// ===== INPUT — END DRAW =====
 function endDraw(e) {
   if (isPanning) {
     isPanning = false;
     canvasSurface.classList.remove('panning');
-    drawCanvas.style.cursor = 'grab';
+    drawCanvas.style.cursor = state.activeTool === 'hand' ? 'grab' : 'crosshair';
     return;
   }
-  e.preventDefault();
   if (isDrawing) {
     isDrawing = false;
     saveStroke();
@@ -831,16 +869,18 @@ function endDraw(e) {
   document.getElementById('brushCursor').style.display = 'none';
 }
 
-function drawDot(x, y) {
+// ===== DRAW DOT (single tap/click) =====
+function drawDot(x, y, pressure) {
   var br = BRUSHES[state.brushType];
   var color = state.activeTool === 'eraser' ? '#FFFFFF' : state.activeColor;
   var dpr = drawCanvas.width / 200;
   var alpha = (state.brushOpacity / 100) * br.alpha;
-  var sz = (br.fixed || state.brushSize * br.scale) * dpr * 0.5;
+  var pressureScale = 0.2 + (pressure || 0.5) * 0.8;
+  var sz = (br.fixed || state.brushSize * br.scale * pressureScale) * dpr * 0.5;
 
   [ctx, fbCtx].forEach(function(c) {
     c.save();
-    setBrushStyle(c, br, color, alpha, br.fixed || state.brushSize * br.scale * dpr);
+    setBrushStyle(c, br, color, alpha, br.fixed || state.brushSize * br.scale * pressureScale * dpr);
 
     if (br.fixed) {
       c.fillRect(x - sz, y - sz, sz * 2, sz * 2);
@@ -849,62 +889,48 @@ function drawDot(x, y) {
       for (var j = 0; j < count; j++) {
         var ang = Math.random() * Math.PI * 2;
         var dist = Math.random() * sz * 3;
-        var jx = x + Math.cos(ang) * dist;
-        var jy = y + Math.sin(ang) * dist;
-        var jr = Math.random() * sz * 0.5 + 0.5;
-        c.beginPath(); c.arc(jx, jy, jr, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(x + Math.cos(ang) * dist, y + Math.sin(ang) * dist, Math.random() * sz * 0.5 + 0.5, 0, Math.PI * 2); c.fill();
       }
     } else if (br.water) {
       for (var j = 0; j < 4; j++) {
         var wx = x + (Math.random() - 0.5) * sz * 3;
         var wy = y + (Math.random() - 0.5) * sz * 3;
-        var wr = sz * (0.6 + Math.random() * 1.4);
         c.globalAlpha = alpha * (0.3 + Math.random() * 0.4);
-        c.beginPath(); c.arc(wx, wy, wr, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(wx, wy, sz * (0.6 + Math.random() * 1.4), 0, Math.PI * 2); c.fill();
       }
     } else if (br.charcoal) {
       for (var j = 0; j < 12; j++) {
-        var cx = x + (Math.random() - 0.5) * sz * 4;
-        var cy = y + (Math.random() - 0.5) * sz * 4;
-        var cs = Math.random() * sz * 0.5 + 0.5;
         c.globalAlpha = alpha * (0.2 + Math.random() * 0.8);
-        c.fillRect(cx - cs, cy - cs, cs * 2, cs * 2);
+        c.fillRect(x + (Math.random() - 0.5) * sz * 4 - Math.random() * sz * 0.5 - 0.5, y + (Math.random() - 0.5) * sz * 4 - Math.random() * sz * 0.5 - 0.5, Math.random() * sz + 1, Math.random() * sz + 1);
       }
     } else if (br.hardErase) {
       c.fillRect(x - sz, y - sz, sz * 2, sz * 2);
     } else if (br.hatch) {
       for (var j = 0; j < 4; j++) {
-        c.save();
-        c.translate(x, y);
-        c.rotate(j * Math.PI / 4);
+        c.save(); c.translate(x, y); c.rotate(j * Math.PI / 4);
         c.fillRect(-sz * 0.3, -sz * 1.2, sz * 0.6, sz * 2.4);
         c.restore();
       }
     } else if (br.fur) {
       var w = sz * 1.2;
       for (var j = 0; j < 7; j++) {
-        var fy = y - w + j * (w * 2) / 6;
-        var fx = x + (Math.random() - 0.5) * w;
-        c.beginPath(); c.arc(fx, fy, sz * 0.4, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(x + (Math.random() - 0.5) * w, y - w + j * (w * 2) / 6, sz * 0.4, 0, Math.PI * 2); c.fill();
       }
     } else if (br.jitter) {
-      var r2 = sz * 2;
       for (var j = 0; j < 10; j++) {
-        var jx = x + (Math.random() - 0.5) * r2;
-        var jy = y + (Math.random() - 0.5) * r2;
-        var jr = Math.random() * sz * 0.7 + 1;
-        c.beginPath(); c.arc(jx, jy, jr, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(x + (Math.random() - 0.5) * sz * 2, y + (Math.random() - 0.5) * sz * 2, Math.random() * sz * 0.7 + 1, 0, Math.PI * 2); c.fill();
       }
     } else if (br.slant) {
-      c.translate(x, y);
+      c.save(); c.translate(x, y);
       c.rotate(br.slant * Math.PI / 180);
       c.scale(br.ratio, 1);
       c.beginPath(); c.arc(0, 0, sz, 0, Math.PI * 2); c.fill();
+      c.restore();
     } else if (br.doubleStroke) {
       c.beginPath(); c.arc(x, y, sz, 0, Math.PI * 2); c.fill();
       c.shadowBlur = 0; c.shadowColor = 'transparent';
       c.globalAlpha = alpha > 0.6 ? alpha : 0.6;
-      c.beginPath(); c.arc(x, y, state.brushSize * br.innerSize * dpr * 0.5, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.arc(x, y, state.brushSize * br.innerSize * pressureScale * dpr * 0.5, 0, Math.PI * 2); c.fill();
     } else {
       c.beginPath(); c.arc(x, y, sz, 0, Math.PI * 2); c.fill();
     }
@@ -913,24 +939,26 @@ function drawDot(x, y) {
   });
 }
 
+// ===== FLOOD FILL =====
 function floodFill(x, y) {
-  const w = frameBuffer.width, h = frameBuffer.height;
-  const imgData = fbCtx.getImageData(0, 0, w, h);
-  const data = imgData.data;
-  const idx = Math.round(y) * w * 4 + Math.round(x) * 4;
-  const tr = data[idx], tg = data[idx+1], tb = data[idx+2], ta = data[idx+3];
-  const fr = parseInt(state.activeColor.slice(1,3),16);
-  const fg = parseInt(state.activeColor.slice(3,5),16);
-  const fb = parseInt(state.activeColor.slice(5,7),16);
+  var w = frameBuffer.width, h = frameBuffer.height;
+  var imgData = fbCtx.getImageData(0, 0, w, h);
+  var data = imgData.data;
+  var idx = Math.round(y) * w * 4 + Math.round(x) * 4;
+  var tr = data[idx], tg = data[idx + 1], tb = data[idx + 2], ta = data[idx + 3];
+  var fr = parseInt(state.activeColor.slice(1, 3), 16);
+  var fg = parseInt(state.activeColor.slice(3, 5), 16);
+  var fb = parseInt(state.activeColor.slice(5, 7), 16);
   if (tr === fr && tg === fg && tb === fb && ta === 255) return;
-  const stack = [[Math.round(x), Math.round(y)]];
+  var stack = [[Math.round(x), Math.round(y)]];
   while (stack.length > 0) {
-    let [sx, sy] = stack.pop();
+    var item = stack.pop();
+    var sx = item[0], sy = item[1];
     if (sx < 0 || sx >= w || sy < 0 || sy >= h) continue;
-    const i = sy * w * 4 + sx * 4;
-    if (data[i] !== tr || data[i+1] !== tg || data[i+2] !== tb || data[i+3] !== ta) continue;
-    data[i] = fr; data[i+1] = fg; data[i+2] = fb; data[i+3] = 255;
-    stack.push([sx+1, sy], [sx-1, sy], [sx, sy+1], [sx, sy-1]);
+    var i = sy * w * 4 + sx * 4;
+    if (data[i] !== tr || data[i + 1] !== tg || data[i + 2] !== tb || data[i + 3] !== ta) continue;
+    data[i] = fr; data[i + 1] = fg; data[i + 2] = fb; data[i + 3] = 255;
+    stack.push([sx + 1, sy], [sx - 1, sy], [sx, sy + 1], [sx, sy - 1]);
   }
   fbCtx.putImageData(imgData, 0, 0);
   ctx.drawImage(frameBuffer, 0, 0);
@@ -938,8 +966,9 @@ function floodFill(x, y) {
   loadFrame(state.currentFrame);
 }
 
+// ===== SAVE STROKE =====
 function saveStroke() {
-  const key = `frame_${state.currentFrame}`;
+  var key = 'frame_' + state.currentFrame;
 
   if (!undoStacks[key]) undoStacks[key] = [];
 
@@ -952,212 +981,17 @@ function saveStroke() {
   if (redoStacks[key]) redoStacks[key] = [];
 
   ensureFrameCanvas(key);
-  const fctx = frameCanvases[key].getContext('2d');
+  var fctx = frameCanvases[key].getContext('2d');
   fctx.clearRect(0, 0, frameCanvases[key].width, frameCanvases[key].height);
   fctx.drawImage(frameBuffer, 0, 0);
 
   delete strokeCanvases[key];
 }
 
-// Mouse events
-drawCanvas.addEventListener('mousedown', startDraw);
-drawCanvas.addEventListener('mousemove', moveDraw);
-drawCanvas.addEventListener('mouseup', endDraw);
-drawCanvas.addEventListener('mouseleave', endDraw);
-
-// Touch events (tablet, stylus, fingers)
-drawCanvas.addEventListener('touchstart', startDraw, {passive:false});
-drawCanvas.addEventListener('touchmove', moveDraw, {passive:false});
-drawCanvas.addEventListener('touchend', endDraw);
-drawCanvas.addEventListener('touchcancel', endDraw);
-
-// Pointer events (unified mouse + touch + stylus with pressure)
-drawCanvas.addEventListener('pointerdown', e => {
-  if (e.pointerType === 'pen') {
-    // Tablet stylus detected — log for debug
-    console.log('Stylus:', e.pointerType, 'pressure:', e.pressure, 'tiltX:', e.tiltX, 'tiltY:', e.tiltY);
-  }
-});
-drawCanvas.addEventListener('pointermove', e => {
-  const c = document.getElementById('brushCursor');
-  if (c.style.display === 'block' && e.pointerType === 'pen') {
-    // Adjust cursor size based on pressure
-    const ps = state.brushSize * (0.3 + e.pressure * 0.7);
-    c.style.width = ps * (drawCanvas.width / 200) + 'px';
-    c.style.height = ps * (drawCanvas.width / 200) + 'px';
-  }
-});
-
-// ─── TOOLS ──────────────────────────
-function setTool(name) {
-  state.activeTool = name;
-  document.querySelectorAll('.tool-panel .btn').forEach(b => b.classList.remove('active'));
-  const map = {brush:'brushBtn', eraser:'eraserBtn', fill:'fillBtn', hand:'handBtn'};
-  const el = document.getElementById(map[name]);
-  if (el) el.classList.add('active');
-  if (name === 'hand') {
-    drawCanvas.style.cursor = 'grab';
-    document.getElementById('brushCursor').style.display = 'none';
-    canvasSurface.style.touchAction = 'none';
-  } else {
-    drawCanvas.style.cursor = 'crosshair';
-    canvasSurface.style.touchAction = 'none';
-  }
-}
-document.getElementById('brushBtn').addEventListener('click', () => setTool('brush'));
-document.getElementById('eraserBtn').addEventListener('click', () => setTool('eraser'));
-document.getElementById('fillBtn').addEventListener('click', () => setTool('fill'));
-document.getElementById('handBtn').addEventListener('click', () => setTool('hand'));
-
-// ─── BRUSH SELECTOR ──────────────────
-document.getElementById('brushStrip').addEventListener('click', function(e) {
-  var btn = e.target.closest('.brush-btn');
-  if (!btn) return;
-  state.brushType = btn.dataset.brush;
-  this.querySelectorAll('.brush-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-});
-
-// ─── ZOOM ────────────────────────────
-document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
-document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
-document.getElementById('zoomResetBtn').addEventListener('click', resetViewport);
-
-// ─── CANVAS PAN ARROWS ────────────────
-document.getElementById('panUp').addEventListener('click', () => panViewport(0, PAN_STEP));
-document.getElementById('panDown').addEventListener('click', () => panViewport(0, -PAN_STEP));
-document.getElementById('panLeft').addEventListener('click', () => panViewport(PAN_STEP, 0));
-document.getElementById('panRight').addEventListener('click', () => panViewport(-PAN_STEP, 0));
-
-// ─── ONION SKIN ─────────────────────
-document.getElementById('onionBtn').addEventListener('click', function() {
-  state.onionEnabled = !state.onionEnabled;
-  this.classList.toggle('onion-on', state.onionEnabled);
-  loadFrame(state.currentFrame);
-});
-
-// ─── SLIDERS ────────────────────────
-document.getElementById('sizeSlider').addEventListener('input', function() {
-  state.brushSize = +this.value;
-  document.getElementById('sizeValue').textContent = this.value + 'px';
-});
-document.getElementById('opacitySlider').addEventListener('input', function() {
-  state.brushOpacity = +this.value;
-  document.getElementById('opacityValue').textContent = this.value + '%';
-});
-
-// ─── FPS SELECTOR ────────────────────
-document.getElementById('fpsSelector').addEventListener('change', function() {
-  state.fps = +this.value;
-  if (state.isPlaying) {
-    playAccumulator = 0;
-    playLastTime = 0;
-  }
-});
-
-// ─── TIMELINE ───────────────────────
-const timeline = document.getElementById('timeline');
-function renderTimeline() {
-  let html = '<div class="go-start" title="Go to start">⏮</div>';
-  for (let i = 0; i < state.totalFrames; i++) {
-    html += `<div class="frame-box${i===state.currentFrame?' active':''}">${i+1}</div>`;
-  }
-  html += '<div class="add-frame-box"><img class="ico" src="icons/add_frame.png" alt="+" style="width:20px;height:20px;filter:invert(57%) sepia(79%) saturate(520%) hue-rotate(73deg) brightness(95%)"></div>';
-  timeline.innerHTML = html;
-
-  // Click handlers
-  const boxes = timeline.querySelectorAll('.frame-box');
-  boxes.forEach((box, i) => box.addEventListener('click', () => selectFrame(i)));
-  timeline.querySelector('.go-start').addEventListener('click', () => selectFrame(0));
-  timeline.querySelector('.add-frame-box').addEventListener('click', () => {
-    state.totalFrames++;
-    state.currentFrame = state.totalFrames - 1;
-    loadFrame(state.currentFrame);
-    updateCounter();
-    renderTimeline();
-    setTimeout(() => timeline.scrollLeft = timeline.scrollWidth, 20);
-  });
-
-  // Scroll to current frame
-  if (!state.isPlaying) {
-    setTimeout(() => {
-      const active = timeline.querySelector('.frame-box.active');
-      if (active) active.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
-    }, 30);
-  }
-
-  updateTimelineArrows();
-}
-
-// ─── TIMELINE SCROLL BUTTONS ─────────
-const tlLeft = document.getElementById('tlScrollLeft');
-const tlRight = document.getElementById('tlScrollRight');
-
-function updateTimelineArrows() {
-  const canScroll = timeline.scrollWidth > timeline.clientWidth + 2;
-  tlLeft.style.display = canScroll ? 'flex' : 'none';
-  tlRight.style.display = canScroll ? 'flex' : 'none';
-}
-
-tlLeft.addEventListener('click', () => {
-  timeline.scrollBy({ left: -200, behavior: 'smooth' });
-});
-tlRight.addEventListener('click', () => {
-  timeline.scrollBy({ left: 200, behavior: 'smooth' });
-});
-timeline.addEventListener('scroll', updateTimelineArrows);
-window.addEventListener('resize', updateTimelineArrows);
-
-function selectFrame(i) {
-  state.currentFrame = i;
-  loadFrame(i);
-  updateCounter();
-  if (state.isPlaying) {
-    const prev = timeline.querySelector('.frame-box.active');
-    if (prev) prev.classList.remove('active');
-    const boxes = timeline.querySelectorAll('.frame-box');
-    if (boxes[i]) boxes[i].classList.add('active');
-  } else {
-    renderTimeline();
-  }
-}
-
-// ─── TOOLBAR ACTIONS ────────────────
-function updateCounter() {
-  document.getElementById('frameCounter').textContent = state.currentFrame + ' / ' + state.totalFrames;
-}
-
-document.querySelector('.toolbar').addEventListener('click', e => {
-  const btn = e.target.closest('.btn');
-  if (!btn) return;
-  const title = btn.title;
-  if (title === 'Undo') undoStroke();
-  else if (title === 'Redo') redoStroke();
-  else if (title === 'Prev Frame') selectFrame(Math.max(0, state.currentFrame - 1));
-  else if (title === 'Next Frame') selectFrame(Math.min(state.totalFrames - 1, state.currentFrame + 1));
-  else if (title === 'Play') togglePlay();
-  else if (title === 'Stop') { if (state.isPlaying) togglePlay(); selectFrame(0); }
-  else if (title === 'Add Frame') {
-    state.totalFrames++;
-    state.currentFrame = state.totalFrames - 1;
-    loadFrame(state.currentFrame);
-    updateCounter();
-    renderTimeline();
-  }
-  else if (title === 'Remove Frame') {
-    if (state.totalFrames <= 1) return;
-    state.totalFrames--;
-    if (state.currentFrame >= state.totalFrames) state.currentFrame = state.totalFrames - 1;
-    loadFrame(state.currentFrame);
-    updateCounter();
-    renderTimeline();
-  }
-});
-
-// ─── UNDO / REDO ────────────────────
+// ===== UNDO / REDO =====
 function undoStroke() {
-  const key = `frame_${state.currentFrame}`;
-  const stack = undoStacks[key];
+  var key = 'frame_' + state.currentFrame;
+  var stack = undoStacks[key];
   if (!stack || stack.length === 0) return;
 
   if (!redoStacks[key]) redoStacks[key] = [];
@@ -1169,7 +1003,7 @@ function undoStroke() {
     );
   }
 
-  const prev = stack.pop();
+  var prev = stack.pop();
   ensureFrameCanvas(key);
   frameCanvases[key].getContext('2d').putImageData(prev, 0, 0);
   delete strokeCanvases[key];
@@ -1177,8 +1011,8 @@ function undoStroke() {
 }
 
 function redoStroke() {
-  const key = `frame_${state.currentFrame}`;
-  const stack = redoStacks[key];
+  var key = 'frame_' + state.currentFrame;
+  var stack = redoStacks[key];
   if (!stack || stack.length === 0) return;
 
   if (!undoStacks[key]) undoStacks[key] = [];
@@ -1190,30 +1024,236 @@ function redoStroke() {
     );
   }
 
-  const next = stack.pop();
+  var next = stack.pop();
   ensureFrameCanvas(key);
   frameCanvases[key].getContext('2d').putImageData(next, 0, 0);
   delete strokeCanvases[key];
   loadFrame(state.currentFrame);
 }
 
-// ─── PLAYBACK ───────────────────────
-let playRafId = null;
-let playAccumulator = 0;
-let playLastTime = 0;
+// ===== POINTER EVENTS =====
+drawCanvas.addEventListener('pointerdown', function(e) {
+  e.preventDefault();
+  drawCanvas.setPointerCapture(e.pointerId);
+  startDraw(e);
+});
+
+drawCanvas.addEventListener('pointermove', function(e) {
+  e.preventDefault();
+  moveDraw(e);
+});
+
+drawCanvas.addEventListener('pointerup', function(e) {
+  e.preventDefault();
+  endDraw(e);
+});
+
+drawCanvas.addEventListener('pointercancel', function(e) {
+  endDraw(e);
+});
+
+drawCanvas.addEventListener('lostpointercapture', function(e) {
+  endDraw(e);
+});
+
+// ===== TOOLS =====
+function setTool(name) {
+  state.activeTool = name;
+  var btns = document.querySelectorAll('[data-action^="tool"]');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  var el = document.querySelector('[data-action="tool' + name.charAt(0).toUpperCase() + name.slice(1) + '"]');
+  if (el) el.classList.add('active');
+
+  if (name === 'hand') {
+    drawCanvas.style.cursor = 'grab';
+    document.getElementById('brushCursor').style.display = 'none';
+  } else {
+    drawCanvas.style.cursor = 'crosshair';
+  }
+}
+
+function toggleOnionSkin() {
+  state.onionEnabled = !state.onionEnabled;
+  var btn = document.querySelector('[data-action="toggleOnion"]');
+  if (state.onionEnabled) { btn.classList.add('onion-on'); } else { btn.classList.remove('onion-on'); }
+  loadFrame(state.currentFrame);
+}
+
+// ===== TOOLBAR ACTION DELEGATION =====
+document.getElementById('toolbar').addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn');
+  if (!btn || !btn.dataset.action) return;
+  handleAction(btn.dataset.action);
+});
+
+function handleAction(action) {
+  switch (action) {
+    case 'undo': undoStroke(); break;
+    case 'redo': redoStroke(); break;
+    case 'prevFrame': selectFrame(Math.max(0, state.currentFrame - 1)); break;
+    case 'nextFrame': selectFrame(Math.min(state.totalFrames - 1, state.currentFrame + 1)); break;
+    case 'play': togglePlay(); break;
+    case 'stop': if (state.isPlaying) togglePlay(); selectFrame(0); break;
+    case 'addFrame':
+      state.totalFrames++;
+      state.currentFrame = state.totalFrames - 1;
+      loadFrame(state.currentFrame);
+      updateCounter();
+      renderTimeline();
+      break;
+    case 'removeFrame':
+      if (state.totalFrames <= 1) return;
+      state.totalFrames--;
+      if (state.currentFrame >= state.totalFrames) state.currentFrame = state.totalFrames - 1;
+      loadFrame(state.currentFrame);
+      updateCounter();
+      renderTimeline();
+      break;
+    case 'exportGif': exportGIF(); break;
+    case 'exportVideo': exportVideo(); break;
+    case 'saveProject': saveProject(); break;
+    case 'openProject': document.getElementById('openFileInput').click(); break;
+    case 'toolBrush': setTool('brush'); break;
+    case 'toolEraser': setTool('eraser'); break;
+    case 'toolFill': setTool('fill'); break;
+    case 'toolHand': setTool('hand'); break;
+    case 'toggleOnion': toggleOnionSkin(); break;
+    case 'zoomIn': zoomIn(); break;
+    case 'zoomOut': zoomOut(); break;
+    case 'zoomReset': resetViewport(); break;
+  }
+}
+
+// ===== BRUSH SELECTOR =====
+document.getElementById('brushStrip').addEventListener('click', function(e) {
+  var btn = e.target.closest('.brush-btn');
+  if (!btn) return;
+  state.brushType = btn.dataset.brush;
+  this.querySelectorAll('.brush-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+});
+
+// ===== SLIDERS =====
+document.getElementById('sizeSlider').addEventListener('input', function() {
+  state.brushSize = +this.value;
+  document.getElementById('sizeValue').textContent = this.value + 'px';
+});
+document.getElementById('opacitySlider').addEventListener('input', function() {
+  state.brushOpacity = +this.value;
+  document.getElementById('opacityValue').textContent = this.value + '%';
+});
+
+// ===== FPS SELECTOR =====
+document.getElementById('fpsSelector').addEventListener('change', function() {
+  state.fps = +this.value;
+  if (state.isPlaying) {
+    playAccumulator = 0;
+    playLastTime = 0;
+  }
+});
+
+// ===== MOUSE WHEEL ZOOM ON CANVAS =====
+canvasSurface.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var rect = drawCanvas.getBoundingClientRect();
+  var mx = e.clientX - rect.left;
+  var my = e.clientY - rect.top;
+
+  var factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+  var newZoom = Math.min(viewport.maxZoom, Math.max(viewport.minZoom, viewport.zoom * factor));
+
+  // Zoom towards cursor position
+  viewport.panX = mx / newZoom - (mx / viewport.zoom - viewport.panX);
+  viewport.panY = my / newZoom - (my / viewport.zoom - viewport.panY);
+  viewport.zoom = newZoom;
+  applyViewport();
+}, { passive: false });
+
+// ===== TIMELINE =====
+const timeline = document.getElementById('timeline');
+function renderTimeline() {
+  var html = '<div class="go-start" data-action="gotoStart" title="Go to start">⏮</div>';
+  for (var i = 0; i < state.totalFrames; i++) {
+    html += '<div class="frame-box' + (i === state.currentFrame ? ' active' : '') + '" data-frame="' + i + '">' + (i + 1) + '</div>';
+  }
+  html += '<div class="add-frame-box" data-action="addFrameTl" title="Add frame"><img class="ico" src="icons/add_frame.png" alt="+" style="width:20px;height:20px;filter:invert(57%) sepia(79%) saturate(520%) hue-rotate(73deg) brightness(95%)"></div>';
+  timeline.innerHTML = html;
+
+  // Click handlers
+  var boxes = timeline.querySelectorAll('.frame-box');
+  boxes.forEach(function(box, i) {
+    box.addEventListener('click', function() { selectFrame(i); });
+  });
+  timeline.querySelector('.go-start').addEventListener('click', function() { selectFrame(0); });
+  timeline.querySelector('.add-frame-box').addEventListener('click', function() {
+    state.totalFrames++;
+    state.currentFrame = state.totalFrames - 1;
+    loadFrame(state.currentFrame);
+    updateCounter();
+    renderTimeline();
+    setTimeout(function() { timeline.scrollLeft = timeline.scrollWidth; }, 20);
+  });
+
+  if (!state.isPlaying) {
+    setTimeout(function() {
+      var active = timeline.querySelector('.frame-box.active');
+      if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }, 30);
+  }
+
+  updateTimelineArrows();
+}
+
+// ===== TIMELINE SCROLL =====
+var tlLeft = document.getElementById('tlScrollLeft');
+var tlRight = document.getElementById('tlScrollRight');
+
+function updateTimelineArrows() {
+  var canScroll = timeline.scrollWidth > timeline.clientWidth + 2;
+  tlLeft.style.display = canScroll ? 'flex' : 'none';
+  tlRight.style.display = canScroll ? 'flex' : 'none';
+}
+
+tlLeft.addEventListener('click', function() { timeline.scrollBy({ left: -200, behavior: 'smooth' }); });
+tlRight.addEventListener('click', function() { timeline.scrollBy({ left: 200, behavior: 'smooth' }); });
+timeline.addEventListener('scroll', updateTimelineArrows);
+window.addEventListener('resize', updateTimelineArrows);
+
+function selectFrame(i) {
+  state.currentFrame = i;
+  loadFrame(i);
+  updateCounter();
+  if (state.isPlaying) {
+    var prev = timeline.querySelector('.frame-box.active');
+    if (prev) prev.classList.remove('active');
+    var boxes = timeline.querySelectorAll('.frame-box');
+    if (boxes[i]) boxes[i].classList.add('active');
+  } else {
+    renderTimeline();
+  }
+}
+
+function updateCounter() {
+  document.getElementById('frameCounter').textContent = state.currentFrame + ' / ' + state.totalFrames;
+}
+
+// ===== PLAYBACK =====
+var playRafId = null;
+var playAccumulator = 0;
+var playLastTime = 0;
 
 function playLoop(timestamp) {
   if (!state.isPlaying) return;
 
-  const frameDuration = 1000 / state.fps;
+  var frameDuration = 1000 / state.fps;
 
   if (playLastTime === 0) playLastTime = timestamp;
-  const delta = timestamp - playLastTime;
+  var delta = timestamp - playLastTime;
   playLastTime = timestamp;
 
   playAccumulator += delta;
 
-  let skip = 0;
+  var skip = 0;
   while (playAccumulator >= frameDuration && skip < 4) {
     playAccumulator -= frameDuration;
     selectFrame((state.currentFrame + 1) % state.totalFrames);
@@ -1226,7 +1266,7 @@ function playLoop(timestamp) {
 
 function togglePlay() {
   state.isPlaying = !state.isPlaying;
-  const icon = document.querySelector('[title="Play"] .ico');
+  var icon = document.querySelector('[data-action="play"] .ico');
   if (state.isPlaying) {
     icon.classList.add('accent');
     playAccumulator = 0;
@@ -1241,59 +1281,39 @@ function togglePlay() {
   }
 }
 
-// ─── KEYBOARD ───────────────────────
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); e.shiftKey ? redoStroke() : undoStroke(); }
-  if (e.key === 'ArrowLeft') { e.preventDefault(); selectFrame(Math.max(0, state.currentFrame - 1)); }
-  if (e.key === 'ArrowRight') { e.preventDefault(); selectFrame(Math.min(state.totalFrames - 1, state.currentFrame + 1)); }
-  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
-});
-
-// ─── DOWNLOAD HELPER ─────────────────
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 500);
-}
-
-// ─── EXPORT GIF ──────────────────────
+// ===== EXPORT GIF =====
 async function exportGIF() {
   if (state.isPlaying) togglePlay();
 
-  const GIF_W = Math.min(320, drawCanvas.width);
-  const GIF_H = Math.round(GIF_W * (drawCanvas.height / drawCanvas.width));
+  var GIF_W = Math.min(320, drawCanvas.width);
+  var GIF_H = Math.round(GIF_W * (drawCanvas.height / drawCanvas.width));
 
-  const frameData = [];
-  for (let i = 0; i < state.totalFrames; i++) {
-    const src = exportFrame(i);
-    const c = document.createElement('canvas');
+  var frameData = [];
+  for (var i = 0; i < state.totalFrames; i++) {
+    var src = exportFrame(i);
+    var c = document.createElement('canvas');
     c.width = GIF_W; c.height = GIF_H;
-    const oc = c.getContext('2d');
+    var oc = c.getContext('2d');
     oc.drawImage(src, 0, 0, GIF_W, GIF_H);
     frameData.push(oc.getImageData(0, 0, GIF_W, GIF_H));
     if (i % 5 === 0) await new Promise(function(r) { setTimeout(r, 0); });
   }
 
-  // Build global palette
-  const freq = {};
-  for (const imgData of frameData) {
-    const d = imgData.data;
-    for (let i = 0; i < d.length; i += 4) {
-      const k = d[i] + ',' + d[i+1] + ',' + d[i+2];
+  var freq = {};
+  for (var fi = 0; fi < frameData.length; fi++) {
+    var d = frameData[fi].data;
+    for (var ii = 0; ii < d.length; ii += 4) {
+      var k = d[ii] + ',' + d[ii + 1] + ',' + d[ii + 2];
       freq[k] = (freq[k] || 0) + 1;
     }
   }
-  const sorted = Object.entries(freq).sort(function(a, b) { return b[1] - a[1]; });
-  const palette = [];
-  for (let i = 0; i < Math.min(256, sorted.length); i++) {
-    palette.push(sorted[i][0].split(',').map(Number));
+  var sorted = Object.entries(freq).sort(function(a, b) { return b[1] - a[1]; });
+  var palette = [];
+  for (var pi = 0; pi < Math.min(256, sorted.length); pi++) {
+    palette.push(sorted[pi][0].split(',').map(Number));
   }
   while (palette.length < 256) palette.push([0, 0, 0]);
 
-  // Precompute color cube for O(1) palette lookup (32 steps per channel)
   var CUBE_BITS = 5;
   var CUBE_SIZE = 1 << CUBE_BITS;
   var cube = new Uint8Array(CUBE_SIZE * CUBE_SIZE * CUBE_SIZE);
@@ -1304,10 +1324,10 @@ async function exportGIF() {
       for (var cb = 0; cb < CUBE_SIZE; cb++) {
         var ccB = (cb << (8 - CUBE_BITS)) | (cb >> (CUBE_BITS * 2 - 8));
         var best = 0, minDist = Infinity;
-        for (var j = 0; j < 256; j++) {
-          var dr = ccR - palette[j][0], dg = ccG - palette[j][1], db = ccB - palette[j][2];
+        for (var jj = 0; jj < 256; jj++) {
+          var dr = ccR - palette[jj][0], dg = ccG - palette[jj][1], db = ccB - palette[jj][2];
           var dist = dr * dr + dg * dg + db * db;
-          if (dist < minDist) { minDist = dist; best = j; }
+          if (dist < minDist) { minDist = dist; best = jj; }
         }
         cube[cr * CUBE_SIZE * CUBE_SIZE + cg * CUBE_SIZE + cb] = best;
       }
@@ -1318,43 +1338,35 @@ async function exportGIF() {
   var bytes = [];
   var b = function(v) { bytes.push(v & 0xFF); };
   var ss = function(v) { b(v & 0xFF); b((v >> 8) & 0xFF); };
-  var str = function(x) { for (var i = 0; i < x.length; i++) b(x.charCodeAt(i)); };
+  var str = function(x) { for (var ii = 0; ii < x.length; ii++) b(x.charCodeAt(ii)); };
 
-  // GIF Header
   str('GIF89a');
-  // Logical screen descriptor
   ss(GIF_W); ss(GIF_H);
   b(0xF7); b(0); b(0);
-  // Global color table
-  for (var i = 0; i < 256; i++) {
-    b(palette[i][0]); b(palette[i][1]); b(palette[i][2]);
+  for (var pi2 = 0; pi2 < 256; pi2++) {
+    b(palette[pi2][0]); b(palette[pi2][1]); b(palette[pi2][2]);
   }
-  // Netscape loop extension
   b(0x21); b(0xFF); b(0x0B);
   str('NETSCAPE2.0');
   b(0x03); b(0x01); b(0x00); b(0x00); b(0x00);
 
   var delayCs = state.fps > 0 ? Math.max(2, Math.round(100 / state.fps)) : 10;
 
-  for (var fi = 0; fi < state.totalFrames; fi++) {
-    // Graphics control extension
+  for (var fi2 = 0; fi2 < state.totalFrames; fi2++) {
     b(0x21); b(0xF9); b(0x04); b(0x04); ss(delayCs); b(0x00); b(0x00);
-    // Image descriptor
     b(0x2C); ss(0); ss(0); ss(GIF_W); ss(GIF_H); b(0x00);
 
-    // Map pixels to palette indices using color cube O(1) per pixel
-    var d = frameData[fi].data;
+    var dd = frameData[fi2].data;
     var indices = [];
     var shift = 8 - CUBE_BITS;
     var stride = CUBE_SIZE * CUBE_SIZE;
-    for (var i = 0; i < d.length; i += 4) {
-      var ri = d[i] >> shift;
-      var gi = d[i + 1] >> shift;
-      var bi = d[i + 2] >> shift;
+    for (var ii2 = 0; ii2 < dd.length; ii2 += 4) {
+      var ri = dd[ii2] >> shift;
+      var gi = dd[ii2 + 1] >> shift;
+      var bi = dd[ii2 + 2] >> shift;
       indices.push(cube[ri * stride + gi * CUBE_SIZE + bi]);
     }
 
-    // LZW encode
     var minCode = 8;
     var clr = 1 << minCode;
     var eoi = clr + 1;
@@ -1363,7 +1375,7 @@ async function exportGIF() {
     var nxt = eoi + 1;
 
     var dict = new Map();
-    for (var i = 0; i < clr; i++) dict.set(String.fromCharCode(i), i);
+    for (var ii3 = 0; ii3 < clr; ii3++) dict.set(String.fromCharCode(ii3), ii3);
 
     var lzw = [];
     var buf = 0, bits = 0;
@@ -1380,14 +1392,14 @@ async function exportGIF() {
     emit(clr);
 
     if (indices.length > 0) {
-      var w = String.fromCharCode(indices[0]);
-      for (var i = 1; i < indices.length; i++) {
-        var ch = String.fromCharCode(indices[i]);
-        var wc = w + ch;
+      var ww = String.fromCharCode(indices[0]);
+      for (var ii4 = 1; ii4 < indices.length; ii4++) {
+        var ch = String.fromCharCode(indices[ii4]);
+        var wc = ww + ch;
         if (dict.has(wc)) {
-          w = wc;
+          ww = wc;
         } else {
-          emit(dict.get(w));
+          emit(dict.get(ww));
           if (nxt < 4096) {
             dict.set(wc, nxt++);
             if (nxt > climit && csz < 12) {
@@ -1395,68 +1407,65 @@ async function exportGIF() {
               climit = 1 << csz;
             }
           }
-          w = ch;
+          ww = ch;
         }
       }
-      emit(dict.get(w));
+      emit(dict.get(ww));
     }
 
     emit(eoi);
     if (bits > 0) lzw.push(buf & 0xFF);
 
-    // Write LZW sub-blocks
     b(minCode);
-    for (var i = 0; i < lzw.length; i += 255) {
-      var block = lzw.slice(i, Math.min(i + 255, lzw.length));
+    for (var ii5 = 0; ii5 < lzw.length; ii5 += 255) {
+      var block = lzw.slice(ii5, Math.min(ii5 + 255, lzw.length));
       b(block.length);
-      for (var j = 0; j < block.length; j++) b(block[j]);
+      for (var jj2 = 0; jj2 < block.length; jj2++) b(block[jj2]);
     }
     b(0x00);
 
     await new Promise(function(r) { setTimeout(r, 0); });
   }
 
-  // GIF Trailer
   b(0x3B);
-
   downloadBlob(new Blob([new Uint8Array(bytes)], { type: 'image/gif' }), nextExportName('gif'));
 }
 
-// ─── EXPORT VIDEO ────────────────────
+// ===== EXPORT VIDEO =====
 async function exportVideo() {
   if (state.isPlaying) togglePlay();
 
-  const videoCanvas = document.createElement('canvas');
+  var videoCanvas = document.createElement('canvas');
   videoCanvas.width = drawCanvas.width;
   videoCanvas.height = drawCanvas.height;
-  const vctx = videoCanvas.getContext('2d');
+  var vctx = videoCanvas.getContext('2d');
 
-  const stream = videoCanvas.captureStream(state.fps);
-  const track = stream.getVideoTracks()[0];
-  const canRequestFrame = track && typeof track.requestFrame === 'function';
+  var stream = videoCanvas.captureStream(state.fps);
+  var track = stream.getVideoTracks()[0];
+  var canRequestFrame = track && typeof track.requestFrame === 'function';
 
-  let mimeType = 'video/webm;codecs=vp9';
+  var mimeType = 'video/webm;codecs=vp9';
   if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8';
   if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
   if (MediaRecorder.isTypeSupported('video/mp4')) mimeType = 'video/mp4';
 
-  const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
-  const chunks = [];
-  let recorder;
+  var ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+  var chunks = [];
+  var recorder;
   try {
-    recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8000000 });
-  } catch (e) {
+    recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 8000000 });
+  } catch (ee) {
     recorder = new MediaRecorder(stream, { videoBitsPerSecond: 8000000 });
   }
 
-  const frameDuration = 1000 / state.fps;
+  var frameDuration = 1000 / state.fps;
   var frameIdx = 0;
 
   vctx.fillStyle = '#FFFFFF';
   vctx.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
 
   return new Promise(function(resolve) {
-    recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+    recorder.ondataavailable = function(ev) { if (ev.data.size > 0) chunks.push(ev.data); };
     recorder.onstop = function() {
       downloadBlob(new Blob(chunks, { type: mimeType }), nextExportName(ext));
       resolve();
@@ -1482,14 +1491,24 @@ async function exportVideo() {
   });
 }
 
-// ─── SAVE / LOAD PROJECT ─────────────
+// ===== DOWNLOAD HELPER =====
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 500);
+}
+
+// ===== SAVE / LOAD PROJECT =====
 function saveProject() {
-  var data = { v:1, fps:state.fps, total:state.totalFrames, frames:{} };
+  var data = { v: 1, fps: state.fps, total: state.totalFrames, frames: {} };
   for (var i = 0; i < state.totalFrames; i++) {
     var fc = frameCanvases['frame_' + i];
     data.frames[i] = fc ? fc.toDataURL('image/png') : null;
   }
-  var blob = new Blob([JSON.stringify(data)], { type:'application/json' });
+  var blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
   downloadBlob(blob, nextExportName('fap'));
 }
 
@@ -1541,15 +1560,6 @@ function loadProjectFile(file) {
   reader.readAsText(file);
 }
 
-// ─── EXPORT EVENTS ───────────────────
-document.getElementById('exportGifBtn').addEventListener('click', exportGIF);
-document.getElementById('exportVideoBtn').addEventListener('click', exportVideo);
-
-// ─── SAVE / LOAD EVENTS ──────────────
-document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
-document.getElementById('openProjectBtn').addEventListener('click', function() {
-  document.getElementById('openFileInput').click();
-});
 document.getElementById('openFileInput').addEventListener('change', function(e) {
   if (e.target.files[0]) {
     loadProjectFile(e.target.files[0]);
@@ -1557,7 +1567,110 @@ document.getElementById('openFileInput').addEventListener('change', function(e) 
   e.target.value = '';
 });
 
-// ─── INIT ───────────────────────────
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
+  // Ignore if typing in input/select elements
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+  // Space — pan mode or play/pause
+  if (e.code === 'Space' && !e.repeat) {
+    e.preventDefault();
+    spaceHeld = true;
+    spaceDidPan = false;
+    if (state.activeTool !== 'hand') {
+      preSpaceTool = state.activeTool;
+      setTool('hand');
+    } else {
+      preSpaceTool = null;
+    }
+    return;
+  }
+
+  var ctrl = e.ctrlKey || e.metaKey;
+  var shift = e.shiftKey;
+
+  // Ctrl shortcuts
+  if (ctrl && !shift && e.key.toLowerCase() === 'z') { e.preventDefault(); undoStroke(); return; }
+  if (ctrl && shift && e.key.toLowerCase() === 'z') { e.preventDefault(); redoStroke(); return; }
+  if (ctrl && e.key.toLowerCase() === 'y') { e.preventDefault(); redoStroke(); return; }
+  if (ctrl && e.key.toLowerCase() === 's') { e.preventDefault(); saveProject(); return; }
+  if (ctrl && e.key.toLowerCase() === 'o') { e.preventDefault(); document.getElementById('openFileInput').click(); return; }
+  if (ctrl && shift && e.key.toLowerCase() === 'g') { e.preventDefault(); exportGIF(); return; }
+  if (ctrl && shift && e.key.toLowerCase() === 'v') { e.preventDefault(); exportVideo(); return; }
+
+  // Arrow keys — frame navigation
+  if (e.key === 'ArrowLeft') { e.preventDefault(); selectFrame(Math.max(0, state.currentFrame - 1)); return; }
+  if (e.key === 'ArrowRight') { e.preventDefault(); selectFrame(Math.min(state.totalFrames - 1, state.currentFrame + 1)); return; }
+  if (e.key === 'Home') { e.preventDefault(); selectFrame(0); return; }
+  if (e.key === 'End') { e.preventDefault(); selectFrame(state.totalFrames - 1); return; }
+
+  // Tool shortcuts
+  switch (e.key.toLowerCase()) {
+    case 'b': e.preventDefault(); setTool('brush'); break;
+    case 'e': e.preventDefault(); setTool('eraser'); break;
+    case 'g': e.preventDefault(); setTool('fill'); break;
+    case 'h': e.preventDefault(); setTool('hand'); break;
+    case 'o': e.preventDefault(); toggleOnionSkin(); break;
+  }
+
+  // Brush size
+  if (e.key === '[') {
+    e.preventDefault();
+    state.brushSize = Math.max(1, state.brushSize - 1);
+    document.getElementById('sizeSlider').value = state.brushSize;
+    document.getElementById('sizeValue').textContent = state.brushSize + 'px';
+  }
+  if (e.key === ']') {
+    e.preventDefault();
+    state.brushSize = Math.min(80, state.brushSize + 1);
+    document.getElementById('sizeSlider').value = state.brushSize;
+    document.getElementById('sizeValue').textContent = state.brushSize + 'px';
+  }
+
+  // Opacity
+  if (e.key === '{' || (shift && e.key === '[')) {
+    e.preventDefault();
+    state.brushOpacity = Math.max(5, state.brushOpacity - 5);
+    document.getElementById('opacitySlider').value = state.brushOpacity;
+    document.getElementById('opacityValue').textContent = state.brushOpacity + '%';
+  }
+  if (e.key === '}' || (shift && e.key === ']')) {
+    e.preventDefault();
+    state.brushOpacity = Math.min(100, state.brushOpacity + 5);
+    document.getElementById('opacitySlider').value = state.brushOpacity;
+    document.getElementById('opacityValue').textContent = state.brushOpacity + '%';
+  }
+
+  // Zoom keyboard
+  if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomIn(); }
+  if (e.key === '-') { e.preventDefault(); zoomOut(); }
+  if (e.key === '0' && ctrl) { e.preventDefault(); resetViewport(); }
+
+  // Brush quick select (1-9, 0, -, =)
+  var brushKeys = ['1','2','3','4','5','6','7','8','9','0','-','='];
+  var brushNames = ['round','square','pencil','soft','calligraphy','marker','ink','chalk','glow','pixel','splatter','watercolor'];
+  var bkIdx = brushKeys.indexOf(e.key);
+  if (bkIdx >= 0 && !ctrl) {
+    e.preventDefault();
+    state.brushType = brushNames[bkIdx];
+    var strip = document.getElementById('brushStrip');
+    strip.querySelectorAll('.brush-btn').forEach(function(b) { b.classList.remove('active'); });
+    var target = strip.querySelector('[data-brush="' + brushNames[bkIdx] + '"]');
+    if (target) target.classList.add('active');
+  }
+});
+
+document.addEventListener('keyup', function(e) {
+  if (e.code === 'Space') {
+    spaceHeld = false;
+    if (!spaceDidPan) {
+      if (preSpaceTool) { setTool(preSpaceTool); preSpaceTool = null; }
+      togglePlay();
+    }
+  }
+});
+
+// ===== INIT =====
 renderTimeline();
 loadFrame(0);
 </script>
