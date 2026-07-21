@@ -449,6 +449,26 @@ body {
     <button class="brush-btn" data-brush="graffiti" title="Graffiti"><img src="icons/brushes/graffiti.png" alt="Graf"></button>
     <button class="brush-btn" data-brush="spiderweb" title="Spiderweb"><img src="icons/brushes/spiderweb.png" alt="Spdr"></button>
     <button class="brush-btn" data-brush="smoke" title="Smoke"><img src="icons/brushes/smoke.png" alt="Smok"></button>
+    <button class="brush-btn" data-brush="confetti" title="Confetti"><span>Conf</span></button>
+    <button class="brush-btn" data-brush="rain" title="Rain"><span>Rain</span></button>
+    <button class="brush-btn" data-brush="bubbles" title="Bubbles"><span>Bubl</span></button>
+    <button class="brush-btn" data-brush="vines" title="Vines"><span>Vine</span></button>
+    <button class="brush-btn" data-brush="scales" title="Scales"><span>Scal</span></button>
+    <button class="brush-btn" data-brush="stitch" title="Stitch"><span>Stit</span></button>
+    <button class="brush-btn" data-brush="grid" title="Grid"><span>Grid</span></button>
+    <button class="brush-btn" data-brush="embers" title="Embers"><span>Embr</span></button>
+    <button class="brush-btn" data-brush="crackle" title="Crackle"><span>Crak</span></button>
+    <button class="brush-btn" data-brush="diamond" title="Diamond"><span>Diam</span></button>
+    <button class="brush-btn" data-brush="feather" title="Feather"><span>Feat</span></button>
+    <button class="brush-btn" data-brush="wire" title="Wire"><span>Wire</span></button>
+    <button class="brush-btn" data-brush="pebble" title="Pebble"><span>Pebb</span></button>
+    <button class="brush-btn" data-brush="brick" title="Brick"><span>Bric</span></button>
+    <button class="brush-btn" data-brush="scribble" title="Scribble"><span>Scrb</span></button>
+    <button class="brush-btn" data-brush="drizzle" title="Drizzle"><span>Drzl</span></button>
+    <button class="brush-btn" data-brush="tribal" title="Tribal"><span>Trib</span></button>
+    <button class="brush-btn" data-brush="frost" title="Frost"><span>Frst</span></button>
+    <button class="brush-btn" data-brush="marble" title="Marble"><span>Marb</span></button>
+    <button class="brush-btn" data-brush="holographic" title="Holographic"><span>Holo</span></button>
   </div>
 
   <!-- COLOR STRIP -->
@@ -537,7 +557,27 @@ const BRUSHES = {
   comet:       { cap:'round',  join:'round',  scale:0.8,  alpha:0.55, comet:true, label:'Comet' },
   graffiti:    { cap:'round',  join:'round',  scale:1.1,  alpha:1.0,  graffiti:true, label:'Graffiti' },
   spiderweb:   { cap:'round',  join:'round',  scale:0.25, alpha:0.9,  spiderweb:true, label:'Spiderweb' },
-  smoke:       { cap:'round',  join:'round',  scale:3.0,  alpha:0.06, smoke:true, label:'Smoke' }
+  smoke:       { cap:'round',  join:'round',  scale:3.0,  alpha:0.06, smoke:true, label:'Smoke' },
+  confetti:    { cap:'round',  join:'round',  scale:0.5,  alpha:1.0,  confetti:true, label:'Confetti' },
+  rain:        { cap:'round',  join:'round',  scale:0.3,  alpha:0.9,  rain:true, label:'Rain' },
+  bubbles:     { cap:'round',  join:'round',  scale:1.2,  alpha:0.4,  bubbles:true, label:'Bubbles' },
+  vines:       { cap:'round',  join:'round',  scale:0.7,  alpha:1.0,  vines:true, label:'Vines' },
+  scales:      { cap:'round',  join:'round',  scale:0.9,  alpha:0.85, scales:true, label:'Scales' },
+  stitch:      { cap:'round',  join:'round',  scale:0.4,  alpha:1.0,  stitch:true, label:'Stitch' },
+  grid:        { cap:'square', join:'miter',  scale:0.3,  alpha:0.8,  grid:true, label:'Grid' },
+  embers:      { cap:'round',  join:'round',  scale:0.6,  alpha:0.7,  embers:true, label:'Embers' },
+  crackle:     { cap:'round',  join:'round',  scale:0.5,  alpha:1.0,  crackle:true, label:'Crackle' },
+  diamond:     { cap:'square', join:'miter',  scale:0.8,  alpha:1.0,  diamond:true, label:'Diamond' },
+  feather:     { cap:'round',  join:'round',  scale:2.5,  alpha:0.08, feather:true, label:'Feather' },
+  wire:        { cap:'round',  join:'round',  scale:0.4,  alpha:0.9,  wire:true, label:'Wire' },
+  pebble:      { cap:'round',  join:'round',  scale:0.8,  alpha:1.0,  pebble:true, label:'Pebble' },
+  brick:       { cap:'square', join:'miter',  scale:0.6,  alpha:1.0,  brick:true, label:'Brick' },
+  scribble:    { cap:'round',  join:'round',  scale:0.15, alpha:0.7,  scribble:true, label:'Scribble' },
+  drizzle:     { cap:'round',  join:'round',  scale:0.25, alpha:0.6,  drizzle:true, label:'Drizzle' },
+  tribal:      { cap:'round',  join:'round',  scale:0.55, alpha:1.0,  tribal:true, label:'Tribal' },
+  frost:       { cap:'round',  join:'round',  scale:0.5,  alpha:0.65, frost:true, label:'Frost' },
+  marble:      { cap:'round',  join:'round',  scale:1.5,  alpha:0.45, marble:true, label:'Marble' },
+  holographic: { cap:'round',  join:'round',  scale:1.3,  alpha:0.5,  holographic:true, label:'Holographic' }
 };
 
 function setBrushStyle(c, br, color, alpha, lw) {
@@ -1192,6 +1232,293 @@ function moveDraw(e) {
               c.beginPath(); c.arc(smkx + (Math.random() - 0.5) * sz * 2, smky + (Math.random() - 0.5) * sz * 2, sz * (0.3 + k * 0.3), 0, Math.PI * 2); c.fill();
             }
           }
+        } else if (br.confetti) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.6)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var ctx2 = lastX + dx * t; var cty = lastY + dy * t;
+            var cc = 10 + Math.floor(Math.random() * 8);
+            var cols = [color, darkenColor(color, 0.6), darkenColor(color, 1.3)];
+            for (var k = 0; k < cc; k++) {
+              c.fillStyle = cols[k % 3];
+              var cfx = ctx2 + (Math.random() - 0.5) * sz * 5;
+              var cfy = cty + (Math.random() - 0.5) * sz * 5;
+              var cfs = Math.random() * sz * 0.5 + 1;
+              if (Math.random() > 0.5) { c.fillRect(cfx - cfs, cfy - cfs, cfs * 2, cfs * 2); }
+              else { c.beginPath(); c.arc(cfx, cfy, cfs, 0, Math.PI * 2); c.fill(); }
+            }
+          }
+        } else if (br.rain) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
+          c.lineWidth = Math.max(1, sz * 0.3);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var rxx = lastX + dx * t; var ryy = lastY + dy * t;
+            var drops = 8 + Math.floor(Math.random() * 5);
+            for (var k = 0; k < drops; k++) {
+              var rx2 = rxx + (Math.random() - 0.5) * sz * 4;
+              var ry2 = ryy + (Math.random() - 0.5) * sz * 5;
+              c.beginPath(); c.moveTo(rx2, ry2 - sz * 1.5); c.lineTo(rx2, ry2 + sz * 1.5); c.stroke();
+            }
+          }
+        } else if (br.bubbles) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 1.0)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var bxx = lastX + dx * t; var byy = lastY + dy * t;
+            var bc = 4 + Math.floor(Math.random() * 4);
+            for (var k = 0; k < bc; k++) {
+              var bx2 = bxx + (Math.random() - 0.5) * sz * 3;
+              var by2 = byy + (Math.random() - 0.5) * sz * 3;
+              var br2 = sz * (0.3 + Math.random() * 0.8);
+              c.strokeStyle = color; c.lineWidth = Math.max(1, br2 * 0.2);
+              c.beginPath(); c.arc(bx2, by2, br2, 0, Math.PI * 2); c.stroke();
+              c.globalAlpha = alpha * 0.15;
+              c.beginPath(); c.arc(bx2 - br2 * 0.3, by2 - br2 * 0.3, br2 * 0.25, 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.vines) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.6)));
+          var a = Math.atan2(dy, dx);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            a += (Math.random() - 0.5) * 1.0;
+            var vx = lastX + dx * t; var vy = lastY + dy * t;
+            c.beginPath(); c.arc(vx, vy, sz * 0.4, 0, Math.PI * 2); c.fill();
+            if (j % 2 === 0) {
+              var la = a + Math.PI / 2;
+              c.beginPath(); c.ellipse(vx + Math.cos(la) * sz * 0.5, vy + Math.sin(la) * sz * 0.5, sz * 0.4, sz * 0.2, la, 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.scales) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.7)));
+          var strokeAngle = Math.atan2(dy, dx);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var sxx2 = lastX + dx * t; var syy2 = lastY + dy * t;
+            var rows = 3;
+            for (var h = 0; h < rows; h++) {
+              var cols = 3;
+              for (var kk = 0; kk < cols; kk++) {
+                var scx = sxx2 + Math.cos(strokeAngle + Math.PI / 2) * h * sz * 1.1 + Math.cos(strokeAngle) * (kk - 1) * sz * 1.2;
+                var scy = syy2 + Math.sin(strokeAngle + Math.PI / 2) * h * sz * 1.1 + Math.sin(strokeAngle) * (kk - 1) * sz * 1.2;
+                c.strokeStyle = color; c.lineWidth = Math.max(1, sz * 0.2);
+                c.beginPath(); c.arc(scx, scy - sz * 0.3, sz * 0.6, Math.PI, 0); c.stroke();
+              }
+            }
+          }
+        } else if (br.stitch) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.8)));
+          var stitchA = Math.atan2(dy, dx);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var stx2 = lastX + dx * t; var sty2 = lastY + dy * t;
+            c.lineWidth = Math.max(1, sz * 0.3);
+            c.beginPath(); c.moveTo(stx2 - sz * 0.6, sty2); c.lineTo(stx2 + sz * 0.6, sty2); c.stroke();
+            if (j % 2 === 0) {
+              c.beginPath(); c.moveTo(stx2 - sz * 0.6, sty2 - sz * 0.6); c.lineTo(stx2 - sz * 0.6 + sz * 1.2, sty2 + sz * 0.6); c.stroke();
+            }
+          }
+        } else if (br.grid) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.6)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var gix = lastX + dx * t; var giy = lastY + dy * t;
+            var gs2 = sz * 2; var gc2 = 3;
+            c.lineWidth = Math.max(1, sz * 0.2);
+            for (var gi = -gc2; gi <= gc2; gi++) {
+              c.beginPath(); c.moveTo(gix - gc2 * gs2, giy + gi * gs2); c.lineTo(gix + gc2 * gs2, giy + gi * gs2); c.stroke();
+              c.beginPath(); c.moveTo(gix + gi * gs2, giy - gc2 * gs2); c.lineTo(gix + gi * gs2, giy + gc2 * gs2); c.stroke();
+            }
+          }
+        } else if (br.embers) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var emx = lastX + dx * t; var emy = lastY + dy * t;
+            var emc = 6 + Math.floor(Math.random() * 5);
+            for (var k = 0; k < emc; k++) {
+              var emr = Math.random() * sz * 0.5 + 1;
+              c.globalAlpha = alpha * (0.4 + Math.random() * 0.6);
+              c.shadowBlur = emr * 3; c.shadowColor = color;
+              c.beginPath(); c.arc(emx + (Math.random() - 0.5) * sz * 4, emy + (Math.random() - 0.5) * sz * 4, emr, 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.crackle) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.8)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var crx = lastX + dx * t; var cry = lastY + dy * t;
+            var branches = 3 + Math.floor(Math.random() * 4);
+            c.lineWidth = Math.max(1, sz * 0.2);
+            for (var k = 0; k < branches; k++) {
+              var angC = Math.random() * Math.PI * 2;
+              var lC = sz * (2 + Math.random() * 3);
+              c.beginPath(); c.moveTo(crx, cry); c.lineTo(crx + Math.cos(angC) * lC, cry + Math.sin(angC) * lC); c.stroke();
+              for (var m = 0; m < 2; m++) {
+                var mpC = 0.3 + Math.random() * 0.5;
+                var bangC = angC + (Math.random() - 0.5) * 1.5;
+                var blC = lC * (0.2 + Math.random() * 0.4);
+                c.beginPath(); c.moveTo(crx + Math.cos(angC) * lC * mpC, cry + Math.sin(angC) * lC * mpC);
+                c.lineTo(crx + Math.cos(angC) * lC * mpC + Math.cos(bangC) * blC, cry + Math.sin(angC) * lC * mpC + Math.sin(bangC) * blC); c.stroke();
+              }
+            }
+          }
+        } else if (br.diamond) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.8)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var dmx = lastX + dx * t; var dmy = lastY + dy * t;
+            var dc2 = 2 + Math.floor(Math.random() * 2);
+            for (var k = 0; k < dc2; k++) {
+              var dmx2 = dmx + (Math.random() - 0.5) * sz * 3;
+              var dmy2 = dmy + (Math.random() - 0.5) * sz * 3;
+              var ds2 = sz * (0.6 + Math.random() * 0.6);
+              c.beginPath(); c.moveTo(dmx2, dmy2 - ds2); c.lineTo(dmx2 + ds2 * 0.6, dmy2);
+              c.lineTo(dmx2, dmy2 + ds2); c.lineTo(dmx2 - ds2 * 0.6, dmy2); c.closePath(); c.fill();
+            }
+          }
+        } else if (br.feather) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 1.5)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var ftx = lastX + dx * t; var fty = lastY + dy * t;
+            var fl = 4;
+            for (var k = 0; k < fl; k++) {
+              var foff = (k - (fl - 1) / 2) * sz * 0.8;
+              c.globalAlpha = alpha * (0.3 + k * 0.15);
+              c.beginPath(); c.arc(ftx + foff * 0.3, fty + foff, sz * (1 - k * 0.15), 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.wire) {
+          c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+          c.strokeStyle = darkenColor(color, 0.5); c.lineWidth = Math.max(1, lw * 0.3);
+          c.beginPath(); c.moveTo(lastX + sz * 0.2, lastY + sz * 0.2); c.lineTo(p.x + sz * 0.2, p.y + sz * 0.2); c.stroke();
+        } else if (br.pebble) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.8)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var pbx = lastX + dx * t; var pby = lastY + dy * t;
+            var pbc = 2 + Math.floor(Math.random() * 3);
+            for (var k = 0; k < pbc; k++) {
+              c.save(); c.translate(pbx + (Math.random() - 0.5) * sz * 3.5, pby + (Math.random() - 0.5) * sz * 3.5);
+              c.rotate(Math.random() * Math.PI);
+              c.scale(0.6 + Math.random() * 0.4, 0.6 + Math.random() * 0.4);
+              c.beginPath(); c.arc(0, 0, sz * 0.7, 0, Math.PI * 2); c.fill(); c.restore();
+            }
+          }
+        } else if (br.brick) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.8)));
+          var strokeAngle = Math.atan2(dy, dx);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var brx = lastX + dx * t; var bry = lastY + dy * t;
+            var bW = sz * 1.2; var bH = sz * 0.7;
+            var rows = 3;
+            for (var h = 0; h < rows; h++) {
+              var offs = h % 2 === 1 ? bW / 2 : 0;
+              var cc2 = 3;
+              for (var k = 0; k < cc2; k++) {
+                var bkx2 = brx + Math.cos(strokeAngle) * ((k - 1) * bW + offs) + Math.cos(strokeAngle + Math.PI / 2) * h * (bH + 1);
+                var bky2 = bry + Math.sin(strokeAngle) * ((k - 1) * bW + offs) + Math.sin(strokeAngle + Math.PI / 2) * h * (bH + 1);
+                c.fillRect(bkx2 - bW / 2 + 1, bky2 - bH / 2 + 1, bW - 2, bH - 2);
+              }
+            }
+          }
+        } else if (br.scribble) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.4)));
+          c.lineWidth = Math.max(1, sz * 0.6);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var scx = lastX + dx * t; var scy = lastY + dy * t;
+            var scc = 20 + Math.floor(Math.random() * 10);
+            for (var k = 0; k < scc; k++) {
+              var angS = Math.random() * Math.PI * 2;
+              var radS = Math.random() * sz * 2.5;
+              c.beginPath(); c.moveTo(scx + Math.cos(angS) * radS * 0.5, scy + Math.sin(angS) * radS * 0.5);
+              var a2S = angS + (Math.random() - 0.5) * 1.5;
+              c.lineTo(scx + Math.cos(a2S) * radS, scy + Math.sin(a2S) * radS); c.stroke();
+            }
+          }
+        } else if (br.drizzle) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.3)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var dzx2 = lastX + dx * t; var dzy2 = lastY + dy * t;
+            var dzc2 = 12 + Math.floor(Math.random() * 8);
+            for (var k = 0; k < dzc2; k++) {
+              c.beginPath(); c.arc(dzx2 + (Math.random() - 0.5) * sz * 4, dzy2 + (Math.random() - 0.5) * sz * 5, Math.random() * sz * 0.5, 0, Math.PI * 2); c.fill();
+            }
+          }
+        } else if (br.tribal) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.7)));
+          c.lineWidth = Math.max(1, sz * 0.5);
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var trx = lastX + dx * t; var try2 = lastY + dy * t;
+            var tp2 = 5 + Math.floor(Math.random() * 3);
+            for (var k = 0; k < tp2; k++) {
+              var ta1 = k / tp2 * Math.PI * 2;
+              var ta2 = (k + 1) / tp2 * Math.PI * 2;
+              var tr2 = sz * (1.5 + Math.random() * 1);
+              c.beginPath(); c.moveTo(trx, try2);
+              c.lineTo(trx + Math.cos(ta1) * tr2, try2 + Math.sin(ta1) * tr2);
+              c.lineTo(trx + Math.cos((ta1 + ta2) / 2) * tr2 * 0.5, try2 + Math.sin((ta1 + ta2) / 2) * tr2 * 0.5);
+              c.closePath(); c.fill();
+            }
+          }
+        } else if (br.frost) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.5)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var frx = lastX + dx * t; var fry = lastY + dy * t;
+            var frc = 8 + Math.floor(Math.random() * 6);
+            for (var k = 0; k < frc; k++) {
+              var fang2 = Math.random() * Math.PI * 2;
+              var fd2 = Math.random() * sz * 3;
+              c.beginPath(); c.moveTo(frx + Math.cos(fang2) * fd2 * 0.3, fry + Math.sin(fang2) * fd2 * 0.3);
+              for (var v = 0; v < 3; v++) {
+                var fa2 = fang2 + v * Math.PI * 2 / 3 + (Math.random() - 0.5) * 0.5;
+                var fl3 = fd2 * (0.8 + Math.random() * 0.3);
+                c.lineTo(frx + Math.cos(fa2) * fl3, fry + Math.sin(fa2) * fl3);
+              }
+              c.closePath(); c.fill();
+            }
+          }
+        } else if (br.marble) {
+          c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.6)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var mbx = lastX + dx * t; var mby = lastY + dy * t;
+            var waves2 = 2 + Math.floor(Math.random() * 2);
+            var mbase2 = sz * 1.5;
+            for (var k = 0; k < waves2; k++) {
+              c.globalAlpha = alpha * (0.3 + k * 0.2);
+              c.lineWidth = Math.max(1, sz * (0.4 + k * 0.2));
+              c.beginPath();
+              for (var m = 0; m <= 6; m++) {
+                var mt2 = m / 6;
+                var mx2 = mbx - mbase2 + mt2 * mbase2 * 2;
+                var my2 = mby + Math.sin(mt2 * Math.PI * 4 + k) * mbase2 * 0.8;
+                if (m === 0) c.moveTo(mx2, my2); else c.lineTo(mx2, my2);
+              }
+              c.stroke();
+            }
+          }
+        } else if (br.holographic) {
+          var steps = Math.max(1, Math.floor(dist / (sz * 0.7)));
+          for (var j = 0; j <= steps; j++) {
+            var t = j / steps;
+            var hlx = lastX + dx * t; var hly = lastY + dy * t;
+            var hcs = ['#FF0000','#FF8800','#FFFF00','#00FF00','#00FFFF','#8800FF','#FF00FF'];
+            for (var k = 0; k < 7; k++) {
+              c.fillStyle = hcs[k]; c.globalAlpha = alpha * 0.35;
+              var hoff2 = (k - 3) * sz * 0.35;
+              var hoffY = (k - 3) * sz * 0.2;
+              c.beginPath(); c.arc(hlx + hoff2, hly + hoffY, sz * 1.3, 0, Math.PI * 2); c.fill();
+            }
+          }
         } else {
           c.beginPath(); c.moveTo(lastX, lastY); c.lineTo(p.x, p.y); c.stroke();
         }
@@ -1464,6 +1791,210 @@ function drawDot(x, y, pressure) {
       for (var j = 0; j < rings; j++) {
         c.globalAlpha = alpha * (0.5 - j * 0.08);
         c.beginPath(); c.arc(x + (Math.random() - 0.5) * sz * 2, y + (Math.random() - 0.5) * sz * 2, sz * (0.3 + j * 0.3), 0, Math.PI * 2); c.fill();
+      }
+    } else if (br.confetti) {
+      var count = 10 + Math.floor(Math.random() * 12);
+      var colorsC = [color, darkenColor(color, 0.6), darkenColor(color, 1.3)];
+      for (var j = 0; j < count; j++) {
+        c.fillStyle = colorsC[j % 3];
+        var cfx = x + (Math.random() - 0.5) * sz * 5;
+        var cfy = y + (Math.random() - 0.5) * sz * 5;
+        var cfs = Math.random() * sz * 0.5 + 1;
+        if (Math.random() > 0.5) { c.fillRect(cfx - cfs, cfy - cfs, cfs * 2, cfs * 2); }
+        else { c.beginPath(); c.arc(cfx, cfy, cfs, 0, Math.PI * 2); c.fill(); }
+      }
+    } else if (br.rain) {
+      var drops = 12 + Math.floor(Math.random() * 8);
+      c.lineWidth = Math.max(1, sz * 0.3);
+      for (var j = 0; j < drops; j++) {
+        var rx = x + (Math.random() - 0.5) * sz * 4;
+        var ry = y + (Math.random() - 0.5) * sz * 5;
+        c.beginPath(); c.moveTo(rx, ry - sz * 1.5); c.lineTo(rx, ry + sz * 1.5); c.stroke();
+      }
+    } else if (br.bubbles) {
+      var bcount = 5 + Math.floor(Math.random() * 6);
+      for (var j = 0; j < bcount; j++) {
+        var bx = x + (Math.random() - 0.5) * sz * 3;
+        var by = y + (Math.random() - 0.5) * sz * 3;
+        var br = sz * (0.3 + Math.random() * 0.8);
+        c.strokeStyle = color; c.lineWidth = Math.max(1, br * 0.2);
+        c.beginPath(); c.arc(bx, by, br, 0, Math.PI * 2); c.stroke();
+        c.globalAlpha = alpha * 0.15;
+        c.beginPath(); c.arc(bx - br * 0.3, by - br * 0.3, br * 0.25, 0, Math.PI * 2); c.fill();
+      }
+    } else if (br.vines) {
+      var segs = 6 + Math.floor(Math.random() * 4);
+      var cx = x; var cy = y; var a = Math.random() * Math.PI * 2;
+      for (var j = 0; j < segs; j++) {
+        a += (Math.random() - 0.5) * 1.2;
+        cx += Math.cos(a) * sz * 1.2; cy += Math.sin(a) * sz * 1.2;
+        c.beginPath(); c.arc(cx, cy, sz * 0.4, 0, Math.PI * 2); c.fill();
+        if (j % 2 === 0) {
+          var la = a + Math.PI / 2;
+          c.beginPath(); c.ellipse(cx + Math.cos(la) * sz * 0.5, cy + Math.sin(la) * sz * 0.5, sz * 0.4, sz * 0.2, la, 0, Math.PI * 2); c.fill();
+        }
+      }
+    } else if (br.scales) {
+      var rows = 4;
+      for (var j = 0; j < rows; j++) {
+        var cols = 3 + Math.floor(j / 2);
+        for (var k = 0; k < cols; k++) {
+          var sx = x + (k - (cols - 1) / 2) * sz * 1.4 + (j % 2 === 1 ? sz * 0.7 : 0);
+          var sy = y + j * sz * 1.1;
+          c.strokeStyle = color; c.lineWidth = Math.max(1, sz * 0.2);
+          c.beginPath(); c.arc(sx, sy - sz * 0.3, sz * 0.7, Math.PI, 0); c.stroke();
+        }
+      }
+    } else if (br.stitch) {
+      var len = 8 + Math.floor(Math.random() * 6);
+      var d = sz * 1.2;
+      c.lineWidth = Math.max(1, sz * 0.3);
+      for (var j = 0; j < len; j++) {
+        var stx = x - len * d / 2 + j * d;
+        c.beginPath(); c.moveTo(stx - d * 0.3, y); c.lineTo(stx + d * 0.3, y); c.stroke();
+        if (j % 2 === 0) {
+          c.beginPath(); c.moveTo(stx - d * 0.3, y - d * 0.3); c.lineTo(stx - d * 0.3 + d * 0.6, y + d * 0.3); c.stroke();
+        }
+      }
+    } else if (br.grid) {
+      var gs = sz * 2;
+      var gc = 4;
+      c.lineWidth = Math.max(1, sz * 0.2);
+      for (var j = -gc; j <= gc; j++) {
+        c.beginPath(); c.moveTo(x - gc * gs, y + j * gs); c.lineTo(x + gc * gs, y + j * gs); c.stroke();
+        c.beginPath(); c.moveTo(x + j * gs, y - gc * gs); c.lineTo(x + j * gs, y + gc * gs); c.stroke();
+      }
+    } else if (br.embers) {
+      var ec = 8 + Math.floor(Math.random() * 8);
+      for (var j = 0; j < ec; j++) {
+        var ex2 = x + (Math.random() - 0.5) * sz * 4;
+        var ey2 = y + (Math.random() - 0.5) * sz * 4;
+        var er = Math.random() * sz * 0.5 + 1;
+        c.globalAlpha = alpha * (0.4 + Math.random() * 0.6);
+        c.shadowBlur = er * 3; c.shadowColor = color;
+        c.beginPath(); c.arc(ex2, ey2, er, 0, Math.PI * 2); c.fill();
+      }
+    } else if (br.crackle) {
+      var branches = 4 + Math.floor(Math.random() * 5);
+      c.lineWidth = Math.max(1, sz * 0.2);
+      for (var j = 0; j < branches; j++) {
+        var ang = Math.random() * Math.PI * 2;
+        var l = sz * (2 + Math.random() * 3);
+        c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(ang) * l, y + Math.sin(ang) * l); c.stroke();
+        for (var k = 0; k < 2; k++) {
+          var mp = 0.3 + Math.random() * 0.5;
+          var bang = ang + (Math.random() - 0.5) * 1.5;
+          var bl = l * (0.2 + Math.random() * 0.4);
+          c.beginPath(); c.moveTo(x + Math.cos(ang) * l * mp, y + Math.sin(ang) * l * mp);
+          c.lineTo(x + Math.cos(ang) * l * mp + Math.cos(bang) * bl, y + Math.sin(ang) * l * mp + Math.sin(bang) * bl); c.stroke();
+        }
+      }
+    } else if (br.diamond) {
+      var dc = 3 + Math.floor(Math.random() * 3);
+      for (var j = 0; j < dc; j++) {
+        var dx2 = x + (Math.random() - 0.5) * sz * 3;
+        var dy2 = y + (Math.random() - 0.5) * sz * 3;
+        var ds = sz * (0.6 + Math.random() * 0.6);
+        c.beginPath(); c.moveTo(dx2, dy2 - ds); c.lineTo(dx2 + ds * 0.6, dy2);
+        c.lineTo(dx2, dy2 + ds); c.lineTo(dx2 - ds * 0.6, dy2); c.closePath(); c.fill();
+      }
+    } else if (br.feather) {
+      var fl = 4;
+      for (var j = 0; j < fl; j++) {
+        var foff = (j - (fl - 1) / 2) * sz * 0.8;
+        c.globalAlpha = alpha * (0.3 + j * 0.15);
+        c.beginPath(); c.arc(x + foff * 0.3, y + foff, sz * (1 - j * 0.15), 0, Math.PI * 2); c.fill();
+      }
+    } else if (br.wire) {
+      c.beginPath(); c.arc(x, y, sz, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = darkenColor(color, 0.5);
+      c.lineWidth = Math.max(1, sz * 0.3);
+      c.beginPath(); c.arc(x + sz * 0.2, y + sz * 0.2, sz, 0, Math.PI * 2); c.stroke();
+    } else if (br.pebble) {
+      var pc = 3 + Math.floor(Math.random() * 4);
+      for (var j = 0; j < pc; j++) {
+        var ppx = x + (Math.random() - 0.5) * sz * 3.5;
+        var ppy = y + (Math.random() - 0.5) * sz * 3.5;
+        c.save(); c.translate(ppx, ppy);
+        c.rotate(Math.random() * Math.PI);
+        c.scale(0.6 + Math.random() * 0.4, 0.6 + Math.random() * 0.4);
+        c.beginPath(); c.arc(0, 0, sz * 0.7, 0, Math.PI * 2); c.fill();
+        c.restore();
+      }
+    } else if (br.brick) {
+      var rows = 3; var bw = sz * 1.2; var bh = sz * 0.7;
+      for (var j = 0; j < rows; j++) {
+        var offset = j % 2 === 1 ? bw / 2 : 0;
+        var cols = 3 + Math.floor(j / 2);
+        for (var k = 0; k < cols; k++) {
+          var bkx = x + (k - (cols - 1) / 2) * bw + offset;
+          var bky = y + j * (bh + 1);
+          c.fillRect(bkx - bw / 2 + 1, bky - bh / 2 + 1, bw - 2, bh - 2);
+        }
+      }
+    } else if (br.scribble) {
+      var sc = 40 + Math.floor(Math.random() * 20);
+      c.lineWidth = Math.max(1, sz * 0.6);
+      for (var j = 0; j < sc; j++) {
+        var ang = Math.random() * Math.PI * 2;
+        var rad = Math.random() * sz * 2.5;
+        c.beginPath(); c.moveTo(x + Math.cos(ang) * rad * 0.5, y + Math.sin(ang) * rad * 0.5);
+        var a2 = ang + (Math.random() - 0.5) * 1.5;
+        c.lineTo(x + Math.cos(a2) * rad, y + Math.sin(a2) * rad); c.stroke();
+      }
+    } else if (br.drizzle) {
+      var dzc = 20 + Math.floor(Math.random() * 15);
+      for (var j = 0; j < dzc; j++) {
+        var dzx = x + (Math.random() - 0.5) * sz * 4;
+        var dzy = y + (Math.random() - 0.5) * sz * 5;
+        c.beginPath(); c.arc(dzx, dzy, Math.random() * sz * 0.5, 0, Math.PI * 2); c.fill();
+      }
+    } else if (br.tribal) {
+      var tp = 6 + Math.floor(Math.random() * 5);
+      c.lineWidth = Math.max(1, sz * 0.5);
+      for (var j = 0; j < tp; j++) {
+        var ta1 = j / tp * Math.PI * 2;
+        var ta2 = (j + 1) / tp * Math.PI * 2;
+        var tr = sz * (1.5 + Math.random() * 1);
+        c.beginPath(); c.moveTo(x, y);
+        c.lineTo(x + Math.cos(ta1) * tr, y + Math.sin(ta1) * tr);
+        c.lineTo(x + Math.cos((ta1 + ta2) / 2) * tr * 0.5, y + Math.sin((ta1 + ta2) / 2) * tr * 0.5);
+        c.closePath(); c.fill();
+      }
+    } else if (br.frost) {
+      var fc = 12 + Math.floor(Math.random() * 10);
+      for (var j = 0; j < fc; j++) {
+        var fang = Math.random() * Math.PI * 2;
+        var fd = Math.random() * sz * 3;
+        c.beginPath(); c.moveTo(x + Math.cos(fang) * fd * 0.3, y + Math.sin(fang) * fd * 0.3);
+        for (var k = 0; k < 3; k++) {
+          var fa = fang + k * Math.PI * 2 / 3 + (Math.random() - 0.5) * 0.5;
+          var fl2 = fd * (0.8 + Math.random() * 0.3);
+          c.lineTo(x + Math.cos(fa) * fl2, y + Math.sin(fa) * fl2);
+        }
+        c.closePath(); c.fill();
+      }
+    } else if (br.marble) {
+      var waves = 3 + Math.floor(Math.random() * 3);
+      var mbase = sz * 1.5;
+      for (var j = 0; j < waves; j++) {
+        c.globalAlpha = alpha * (0.3 + j * 0.2);
+        c.lineWidth = Math.max(1, sz * (0.5 + j * 0.2));
+        c.beginPath();
+        for (var k = 0; k <= 12; k++) {
+          var mt = k / 12;
+          var mx = x - mbase + mt * mbase * 2;
+          var my = y + Math.sin(mt * Math.PI * 4 + j) * mbase * 0.8;
+          if (k === 0) c.moveTo(mx, my); else c.lineTo(mx, my);
+        }
+        c.stroke();
+      }
+    } else if (br.holographic) {
+      var hColors = ['#FF0000','#FF8800','#FFFF00','#00FF00','#00FFFF','#8800FF','#FF00FF'];
+      for (var j = 0; j < 7; j++) {
+        c.fillStyle = hColors[j]; c.globalAlpha = alpha * 0.35;
+        var hoff = (j - 3) * sz * 0.35;
+        c.beginPath(); c.arc(x + hoff, y + hoff * 0.5, sz * 1.3, 0, Math.PI * 2); c.fill();
       }
     } else {
       c.beginPath(); c.arc(x, y, sz, 0, Math.PI * 2); c.fill();
