@@ -597,22 +597,40 @@ function setBrushStyle(c, br, color, alpha, lw) {
 
 // ===== COLORS =====
 const COLORS = [
+  // Blacks & Whites
   "#000000","#FFFFFF",
-  "#FF3333","#DC143C","#FF1493","#FF00FF","#C71585","#FF44AA","#FF69B4","#8B008B",
-  "#FF8800","#FF4500","#FF8C00","#CD853F","#8B5E3C",
-  "#FFDD00","#FFD700","#DAA520",
-  "#33CC33","#00FF00","#7FFF00","#00FF7F","#228B22","#2E8B57",
-  "#00CCCC","#00FFFF","#008080",
-  "#3388FF","#1E90FF","#4682B4","#8833FF","#4B0082",
-  "#999999","#696969",
-  // Ultra fluor / neon
-  "#FF006E","#FF004D","#FF5500","#FFAA00","#CCFF00",
-  "#39FF14","#00FFAA","#00D4FF","#0AFFEF","#00FFCC",
-  "#7B00FF","#BF00FF","#9933FF","#6A00FF","#FF47B0",
-  "#FF55CC","#FFB3DE","#FF007F","#FF3366","#FF7700",
-  "#F0FF00","#8DFF33","#50FF50","#7DF9FF","#87CEEB",
-  "#FFAF00","#AAFF00","#FF00DD","#FF6A00","#00BFFF",
-  "#CC0000","#0066CC"
+  // Reds → dark to bright
+  "#CC0000","#DC143C","#FF3333","#FF004D","#FF3366",
+  // Red-Oranges
+  "#FF4500","#FF5500","#FF6A00","#FF7700",
+  // Oranges
+  "#FF8800","#FF8C00","#FFAF00","#FFAA00","#CD853F",
+  // Browns
+  "#8B5E3C",
+  // Yellows
+  "#FFDD00","#FFD700","#DAA520","#F0FF00",
+  // Lime / Chartreuse
+  "#CCFF00","#AAFF00","#7FFF00","#8DFF33",
+  // Neon Greens
+  "#39FF14","#50FF50","#00FF00",
+  // Greens
+  "#33CC33","#00FF7F","#228B22","#2E8B57",
+  // Teal / Spring
+  "#00FFAA","#00FFCC","#00FFFF","#0AFFEF",
+  // Cyan / Sky
+  "#7DF9FF","#00D4FF","#00BFFF","#00CCCC","#008080",
+  // Blues → light to dark
+  "#87CEEB","#1E90FF","#3388FF","#0066CC","#4682B4",
+  // Purples / Indigos
+  "#8833FF","#7B00FF","#9933FF","#6A00FF","#4B0082",
+  // Magentas
+  "#BF00FF","#8B008B","#FF00FF","#FF00DD",
+  // Hot Pinks
+  "#FF006E","#FF1493","#C71585","#FF007F",
+  // Pinks
+  "#FF47B0","#FF55CC","#FF44AA","#FF69B4","#FFB3DE",
+  // Grays
+  "#999999","#696969"
 ];
 
 const colorStrip = document.getElementById('colorStrip');
