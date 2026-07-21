@@ -17,7 +17,8 @@
 | **Viewport** | Phone simulator (390×844 px, rounded corners) | **Full browser window**, responsive to any monitor size |
 | **Layout** | Tools below canvas (thumb zone) | **Unified toolbar on top** — single compact row |
 | **Pan arrows** | 4 arrow buttons | **Space+drag**, hand tool, mouse wheel zoom to cursor |
-| **Colors** | 32 | **64** (including ultra fluor/neon palette) |
+| **Colors** | 32 | **66** (organized by hue gradient: reds→oranges→yellows→greens→cyans→blues→purples→pinks→grays) |
+| **Brushes** | 20 | **60** (20 classic + 40 new, all with pressure support) |
 | **Scrollbars** | Hidden (mobile UX) | **Visible** on all tool bars for small screens |
 | **Shortcuts** | Ctrl+Z, arrows, Space | **Full keyboard map** (B/E/G/H tools, 1-9 brushes, `[`/`]` size, Ctrl+S/O, mouse wheel zoom, etc.) |
 
@@ -100,7 +101,7 @@ Maps pressure range [0, 1] → [20%, 100%] of configured brush size. Light touch
 
 ## Features
 
-### 40 Brushes (20 Classic + 20 New)
+### 60 Brushes (20 Classic + 40 New)
 
 Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 
@@ -154,6 +155,31 @@ Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 | 39 | **Spiderweb** | 6-8 thin radial lines from each sample point + solid center dot | Yes |
 | 40 | **Smoke** | 5-8 expanding soft circles with increasing radius and decreasing opacity | Yes |
 
+**New brushes (#41-60) — Desktop exclusive v2:**
+
+| # | Brush | Technique | Pressure |
+|---|-------|-----------|----------|
+| 41 | **Confetti** | Random squares & circles in 3 tonal variants scattered along path | Yes |
+| 42 | **Rain** | 12-20 thin vertical dashes simulating falling rain | Yes |
+| 43 | **Bubbles** | 5-11 hollow circles with highlight — bubble cluster effect | Yes |
+| 44 | **Vines** | Curling spiral path with alternating leaf ellipses | Yes |
+| 45 | **Scales** | Overlapping arc pattern (fish-scale texture) | Yes |
+| 46 | **Stitch** | Dashed line with perpendicular cross-stitches at intervals | Yes |
+| 47 | **Grid** | Fine grid/crosshatch of horizontal & vertical lines | Yes |
+| 48 | **Embers** | Glowing dots with `shadowBlur` — fire ember spark effect | Yes |
+| 49 | **Crackle** | Jagged branching cracks with sub-branches (broken glass) | Yes |
+| 50 | **Diamond** | Diamond/rhombus shape stamps of varying sizes along path | Yes |
+| 51 | **Feather** | 4 soft layered stroke offsets with decreasing opacity | Yes |
+| 52 | **Wire** | Solid fill + darker 3D shadow offset (metallic wire look) | Yes |
+| 53 | **Pebble** | Rotated & scaled ovals scattered along stroke (stone texture) | Yes |
+| 54 | **Brick** | Staggered rectangular brick pattern | Yes |
+| 55 | **Scribble** | 40-60 dense random circular scribble lines | Yes |
+| 56 | **Drizzle** | Very fine dot spray (20-35 per sample) — light rain texture | Yes |
+| 57 | **Tribal** | Radial triangular geometric pattern stamps | Yes |
+| 58 | **Frost** | 3-point crystalline branched shapes — ice/frost crystals | Yes |
+| 59 | **Marble** | Overlapping sine-wave veins with varying thickness | Yes |
+| 60 | **Holographic** | 7-offset rainbow/prismatic layered circles | Yes |
+
 ### Onion Skin
 
 - **Red tint** for previous frames, **green tint** for next frames
@@ -162,10 +188,11 @@ Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 - Opacity decay: 35% (nearest) → 26% → 17.5% (farthest)
 - Toggle via onion button or **O key**
 
-### 64-Color Palette
+### 66-Color Palette
 
-- 32 standard colors (classic web palette)
-- 32 **ultra fluor/neon** colors (hot magenta `#FF006E`, neon green `#39FF14`, electric cyan `#00D4FF`, fluorescent violet `#7B00FF`, fluorescent orange `#FF5500`, etc.)
+- **Organized by hue gradient**: Black/White → Reds → Oranges → Yellows → Limes → Greens → Teals → Cyans → Blues → Purples → Magentas → Pinks → Grays
+- 34 classic web colors + 32 ultra fluor/neon colors
+- Smooth chromatic progression for intuitive color picking
 - Scrollable strip with visible scrollbar
 
 ### Undo / Redo
@@ -276,7 +303,7 @@ A `?` button on the right side of the toolbar opens a dropdown panel with all sh
 ┌──────────────────────────────────────────────────────────────┐
 │ [logo] | undo redo | ◀ ▶ ■ ▶ | 0/24 + - FPS▾ | | B E G ◐ H | | S▬5px O▬100% | | + - 🔍 | gif mp4 save open │  ← unified toolbar (40px)
 ├──────────────────────────────────────────────────────────────┤
-│ ◉ ■ ◎ │ ◉ ... (40 brushes, scrollable)                       │  ← brush strip (30px)
+│ ◉ ■ ◎ │ ◉ ... (60 brushes, scrollable)                       │  ← brush strip (30px)
 ├──────────────────────────────────────────────────────────────┤
 │ ●●●●●●●●●●●●●●●●●●●●... (64 colors, scrollable)               │  ← color strip (30px)
 ├──────────────────────────────────────────────────────────────┤
@@ -331,7 +358,7 @@ FAP_PC_WEB_VERSION/
 ├── index.html          # Single-file app (HTML + CSS + JS)
 ├── README.md
 └── icons/
-    ├── brushes/        # 40 brush PNG icons
+    ├── brushes/        # 60 brush PNG icons
     └── *.png / *.svg   # 55+ UI icons (shared with mobile version)
 ```
 
