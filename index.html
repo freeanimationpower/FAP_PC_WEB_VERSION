@@ -46,6 +46,7 @@ body {
   height: 100vh;
   overflow: hidden;
   background: #0a0a0f;
+  position: relative;
 }
 
 /* ===== BUTTON BASE ===== */
@@ -119,6 +120,40 @@ body {
   background: var(--accent); cursor: pointer; border: 1.5px solid var(--accent-light);
 }
 .slider-value { color: var(--text-primary); font-size: 10px; min-width: 24px; text-align: center; }
+
+/* ===== SHORTCUTS DROPDOWN ===== */
+.shortcuts-dropdown {
+  position: fixed; top: 46px; right: 12px;
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 18px; z-index: 100;
+  display: none; min-width: 380px; max-width: 440px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  max-height: 70vh; overflow-y: auto;
+}
+.shortcuts-dropdown.show { display: block; }
+.shortcuts-dropdown h3 {
+  color: var(--accent-light); font-size: 13px; margin: 0 0 10px 0;
+  border-bottom: 1px solid var(--border); padding-bottom: 6px;
+}
+.shortcuts-dropdown .sc-group { margin-bottom: 10px; }
+.shortcuts-dropdown .sc-title {
+  color: var(--accent); font-size: 11px; font-weight: 700;
+  margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.shortcuts-dropdown .sc-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 2px 0; font-size: 11px; color: var(--text-secondary);
+}
+.shortcuts-dropdown .sc-row .sc-key {
+  background: var(--bg-tertiary); border: 1px solid var(--border);
+  border-radius: 3px; padding: 1px 6px; font-family: monospace;
+  font-size: 10px; color: var(--text-primary); min-width: 70px;
+  text-align: center; white-space: nowrap;
+}
+.shortcuts-dropdown .sc-row .sc-desc { flex: 1; margin-left: 8px; }
+.shortcuts-dropdown::-webkit-scrollbar { width: 6px; }
+.shortcuts-dropdown::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
+.shortcuts-dropdown::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
 /* ===== BRUSH STRIP ===== */
 .brush-strip {
@@ -325,7 +360,48 @@ body {
     <button class="btn btn-label" data-action="exportVideo" title="Export Video (Ctrl+Shift+V)"><img class="ico" src="icons/export video.png" alt="Vid"><span class="btn-text">mp4</span></button>
     <button class="btn btn-label" data-action="saveProject" title="Save Project (Ctrl+S)"><img class="ico" src="icons/save project.png" alt="Save"><span class="btn-text">save</span></button>
     <button class="btn btn-label" data-action="openProject" title="Open Project (Ctrl+O)"><img class="ico" src="icons/open project.png" alt="Open"><span class="btn-text">open</span></button>
+    <div class="tool-sep"></div>
+    <button class="btn" id="shortcutsBtn" title="Keyboard Shortcuts" style="font-size:14px;font-weight:700;color:var(--accent-light)">?</button>
     <input type="file" id="openFileInput" accept=".fap,application/json" style="display:none">
+    <div class="shortcuts-dropdown" id="shortcutsDropdown">
+      <h3>Keyboard Shortcuts</h3>
+      <div class="sc-group">
+        <div class="sc-title">Tools</div>
+        <div class="sc-row"><span class="sc-key">B</span><span class="sc-desc">Brush</span></div>
+        <div class="sc-row"><span class="sc-key">E</span><span class="sc-desc">Eraser</span></div>
+        <div class="sc-row"><span class="sc-key">G</span><span class="sc-desc">Fill / Bucket</span></div>
+        <div class="sc-row"><span class="sc-key">H</span><span class="sc-desc">Hand / Pan</span></div>
+        <div class="sc-row"><span class="sc-key">O</span><span class="sc-desc">Toggle Onion Skin</span></div>
+      </div>
+      <div class="sc-group">
+        <div class="sc-title">Navigation</div>
+        <div class="sc-row"><span class="sc-key">Space (tap)</span><span class="sc-desc">Play / Pause</span></div>
+        <div class="sc-row"><span class="sc-key">Space (hold)</span><span class="sc-desc">Temporary Pan</span></div>
+        <div class="sc-row"><span class="sc-key">← →</span><span class="sc-desc">Previous / Next Frame</span></div>
+        <div class="sc-row"><span class="sc-key">Home / End</span><span class="sc-desc">First / Last Frame</span></div>
+      </div>
+      <div class="sc-group">
+        <div class="sc-title">Brush</div>
+        <div class="sc-row"><span class="sc-key">[ / ]</span><span class="sc-desc">Size -1 / +1 px</span></div>
+        <div class="sc-row"><span class="sc-key">Shift+[ / ]</span><span class="sc-desc">Opacity -5% / +5%</span></div>
+        <div class="sc-row"><span class="sc-key">1 … 9 0 - =</span><span class="sc-desc">Quick Brush Select (1-12)</span></div>
+      </div>
+      <div class="sc-group">
+        <div class="sc-title">Zoom</div>
+        <div class="sc-row"><span class="sc-key">Mouse Wheel</span><span class="sc-desc">Zoom in/out on canvas</span></div>
+        <div class="sc-row"><span class="sc-key">+ / -</span><span class="sc-desc">Zoom in / out</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl + 0</span><span class="sc-desc">Reset Zoom</span></div>
+      </div>
+      <div class="sc-group">
+        <div class="sc-title">Edit & Export</div>
+        <div class="sc-row"><span class="sc-key">Ctrl + Z</span><span class="sc-desc">Undo</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl+Shift+Z</span><span class="sc-desc">Redo</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl + S</span><span class="sc-desc">Save Project (.fap)</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl + O</span><span class="sc-desc">Open Project (.fap)</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl+Shift+G</span><span class="sc-desc">Export GIF</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl+Shift+V</span><span class="sc-desc">Export Video</span></div>
+      </div>
+    </div>
   </div>
 
   <!-- BRUSH STRIP -->
@@ -1539,6 +1615,28 @@ document.getElementById('toolbar').addEventListener('click', function(e) {
   var btn = e.target.closest('.btn');
   if (!btn || !btn.dataset.action) return;
   handleAction(btn.dataset.action);
+});
+
+// ===== SHORTCUTS DROPDOWN =====
+var shortcutsBtn = document.getElementById('shortcutsBtn');
+var shortcutsDropdown = document.getElementById('shortcutsDropdown');
+
+shortcutsBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  shortcutsDropdown.classList.toggle('show');
+});
+
+document.addEventListener('click', function(e) {
+  if (!shortcutsDropdown.classList.contains('show')) return;
+  if (!shortcutsDropdown.contains(e.target) && e.target !== shortcutsBtn) {
+    shortcutsDropdown.classList.remove('show');
+  }
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && shortcutsDropdown.classList.contains('show')) {
+    shortcutsDropdown.classList.remove('show');
+  }
 });
 
 function handleAction(action) {
