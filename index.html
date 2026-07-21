@@ -337,6 +337,8 @@ body {
     <button class="btn" data-action="toolFill" title="Fill (G)"><img class="ico" src="icons/fill.png" alt="F"></button>
     <button class="btn onion-on" data-action="toggleOnion" title="Onion Skin (O)"><span class="ico-onion" style="color:var(--text-secondary);font-size:14px;line-height:1;pointer-events:none">◐</span></button>
     <button class="btn" data-action="toolHand" title="Hand / Pan (H)"><img class="ico" src="icons/hand.png" alt="H"></button>
+    <button class="btn" data-action="toggleGrid" title="Toggle Grid"><img class="ico" src="icons/toggle grid.png" alt="#"></button>
+    <button class="btn" data-action="toggleSafeZone" title="Toggle Safe Zone" style="font-size:13px;line-height:1;color:var(--text-secondary);font-weight:700">⊞</button>
     <div class="tool-sep"></div>
     <div class="spacer"></div>
     <div class="slider-group">
@@ -501,6 +503,7 @@ const state = {
   currentFrame: 0, totalFrames: 24, fps: 24,
   activeColor: '#000000', brushSize: 5, brushOpacity: 100,
   isPlaying: false, activeTool: 'brush', onionEnabled: true,
+  showGrid: false, showSafeZone: false,
   brushType: 'round'
 };
 
@@ -666,6 +669,45 @@ function resetViewport() {
   applyViewport();
 }
 
+function drawGrid() {
+  if (!state.showGrid) return;
+  var gs = 48;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(100,100,100,0.2)';
+  ctx.lineWidth = 1;
+  for (var x = gs; x < drawCanvas.width; x += gs) {
+    ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, drawCanvas.height); ctx.stroke();
+  }
+  for (var y = gs; y < drawCanvas.height; y += gs) {
+    ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(drawCanvas.width, y + 0.5); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawSafeZone() {
+  if (!state.showSafeZone) return;
+  var w = drawCanvas.width, h = drawCanvas.height;
+  var ax = Math.round(w * 0.05), ay = Math.round(h * 0.05);
+  var aw = Math.round(w * 0.9), ah = Math.round(h * 0.9);
+  var tx = Math.round(w * 0.1), ty = Math.round(h * 0.1);
+  var tw = Math.round(w * 0.8), th = Math.round(h * 0.8);
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
+  ctx.fillRect(0, 0, ax, h);
+  ctx.fillRect(w - ax, 0, ax, h);
+  ctx.fillRect(ax, 0, aw, ay);
+  ctx.fillRect(ax, h - ay, aw, ay);
+  ctx.strokeStyle = 'rgba(255,50,50,0.55)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 4]);
+  ctx.strokeRect(ax + 0.5, ay + 0.5, aw, ah);
+  ctx.strokeStyle = 'rgba(255,50,50,0.35)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(tx + 0.5, ty + 0.5, tw, th);
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
 // ===== CANVAS SETUP =====
 const drawCanvas = document.getElementById('drawCanvas');
 const canvasSurface = document.getElementById('canvasSurface');
@@ -818,6 +860,8 @@ function loadFrame(fn) {
   if (currentLayer) ctx.drawImage(currentLayer, 0, 0);
 
   document.getElementById('onionIndicator').style.display = state.onionEnabled ? 'flex' : 'none';
+  drawGrid();
+  drawSafeZone();
 }
 
 // ===== INPUT — POSITION =====
@@ -2162,6 +2206,21 @@ function toggleOnionSkin() {
   loadFrame(state.currentFrame);
 }
 
+function toggleGrid() {
+  state.showGrid = !state.showGrid;
+  var btn = document.querySelector('[data-action="toggleGrid"]');
+  if (state.showGrid) { btn.classList.add('active'); } else { btn.classList.remove('active'); }
+  loadFrame(state.currentFrame);
+}
+
+function toggleSafeZone() {
+  state.showSafeZone = !state.showSafeZone;
+  var btn = document.querySelector('[data-action="toggleSafeZone"]');
+  if (state.showSafeZone) { btn.classList.add('active'); btn.style.color = 'var(--accent-light)'; }
+  else { btn.classList.remove('active'); btn.style.color = 'var(--text-secondary)'; }
+  loadFrame(state.currentFrame);
+}
+
 // ===== TOOLBAR ACTION DELEGATION =====
 document.getElementById('toolbar').addEventListener('click', function(e) {
   var btn = e.target.closest('.btn');
@@ -2223,6 +2282,8 @@ function handleAction(action) {
     case 'toolFill': setTool('fill'); break;
     case 'toolHand': setTool('hand'); break;
     case 'toggleOnion': toggleOnionSkin(); break;
+    case 'toggleGrid': toggleGrid(); break;
+    case 'toggleSafeZone': toggleSafeZone(); break;
     case 'zoomIn': zoomIn(); break;
     case 'zoomOut': zoomOut(); break;
     case 'zoomReset': resetViewport(); break;
