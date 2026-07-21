@@ -229,6 +229,9 @@ body::-webkit-scrollbar-thumb { background:var(--accent); border-radius:6px; }
     </select>
     <button class="btn" id="exportGifBtn" title="Export GIF"><img class="ico" src="icons/export gif.png" alt="GIF"></button>
     <button class="btn" id="exportVideoBtn" title="Export Video"><img class="ico" src="icons/export video.png" alt="Video"></button>
+    <button class="btn" id="saveProjectBtn" title="Save Project"><img class="ico" src="icons/save project.png" alt="Save"></button>
+    <button class="btn" id="openProjectBtn" title="Open Project"><img class="ico" src="icons/open project.png" alt="Open"></button>
+    <input type="file" id="openFileInput" accept=".fap,application/json" style="display:none">
   </div>
 
   <!-- COLOR STRIP -->
@@ -1467,9 +1470,80 @@ async function exportVideo() {
   });
 }
 
+// ─── SAVE / LOAD PROJECT ─────────────
+function saveProject() {
+  var data = { v:1, fps:state.fps, total:state.totalFrames, frames:{} };
+  for (var i = 0; i < state.totalFrames; i++) {
+    var fc = frameCanvases['frame_' + i];
+    data.frames[i] = fc ? fc.toDataURL('image/png') : null;
+  }
+  var blob = new Blob([JSON.stringify(data)], { type:'application/json' });
+  downloadBlob(blob, 'proyecto.fap');
+}
+
+function loadFrameFromPNG(src, idx) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    img.onload = function() {
+      ensureFrameCanvas('frame_' + idx);
+      var fctx = frameCanvases['frame_' + idx].getContext('2d');
+      fctx.clearRect(0, 0, fctx.canvas.width, fctx.canvas.height);
+      fctx.drawImage(img, 0, 0);
+      resolve();
+    };
+    img.onerror = function() { resolve(); };
+    img.src = src;
+  });
+}
+
+function loadProjectFile(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.v || !data.frames || typeof data.total !== 'number') throw new Error('Invalid .fap');
+      state.totalFrames = data.total;
+      state.fps = data.fps || 24;
+      document.getElementById('fpsSelector').value = state.fps;
+      clearAllFrameData();
+      var promises = [];
+      for (var i = 0; i < state.totalFrames; i++) {
+        if (data.frames[i] && data.frames[i].length > 10) {
+          promises.push(loadFrameFromPNG(data.frames[i], i));
+        } else {
+          ensureFrameCanvas('frame_' + i);
+        }
+      }
+      Promise.all(promises).then(function() {
+        state.currentFrame = 0;
+        loadFrame(0);
+        updateCounter();
+        renderTimeline();
+        console.log('FAP: proyecto cargado — ' + state.totalFrames + ' frames, ' + state.fps + ' fps');
+      });
+    } catch (err) {
+      alert('Archivo .fap inválido o corrupto.');
+      console.error('FAP load error:', err);
+    }
+  };
+  reader.readAsText(file);
+}
+
 // ─── EXPORT EVENTS ───────────────────
 document.getElementById('exportGifBtn').addEventListener('click', exportGIF);
 document.getElementById('exportVideoBtn').addEventListener('click', exportVideo);
+
+// ─── SAVE / LOAD EVENTS ──────────────
+document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+document.getElementById('openProjectBtn').addEventListener('click', function() {
+  document.getElementById('openFileInput').click();
+});
+document.getElementById('openFileInput').addEventListener('change', function(e) {
+  if (e.target.files[0]) {
+    loadProjectFile(e.target.files[0]);
+  }
+  e.target.value = '';
+});
 
 // ─── INIT ───────────────────────────
 renderTimeline();
