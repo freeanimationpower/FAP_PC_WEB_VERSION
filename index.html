@@ -383,6 +383,13 @@ const state = {
 
 const viewport = { zoom:1, panX:0, panY:0, minZoom:0.3, maxZoom:5 };
 let isPanning = false, panStartX = 0, panStartY = 0, panStartPanX = 0, panStartPanY = 0;
+var exportCounter = 0;
+
+function nextExportName(ext) {
+  exportCounter++;
+  var num = exportCounter < 10 ? '0' + exportCounter : '' + exportCounter;
+  return 'FREEANIMATIONPOWER_' + num + '.' + ext;
+}
 
 // ─── BRUSHES ────────────────────────
 const BRUSHES = {
@@ -1412,7 +1419,7 @@ async function exportGIF() {
   // GIF Trailer
   b(0x3B);
 
-  downloadBlob(new Blob([new Uint8Array(bytes)], { type: 'image/gif' }), 'animacion.gif');
+  downloadBlob(new Blob([new Uint8Array(bytes)], { type: 'image/gif' }), nextExportName('gif'));
 }
 
 // ─── EXPORT VIDEO ────────────────────
@@ -1451,7 +1458,7 @@ async function exportVideo() {
   return new Promise(function(resolve) {
     recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
     recorder.onstop = function() {
-      downloadBlob(new Blob(chunks, { type: mimeType }), 'animacion.' + ext);
+      downloadBlob(new Blob(chunks, { type: mimeType }), nextExportName(ext));
       resolve();
     };
 
@@ -1483,7 +1490,7 @@ function saveProject() {
     data.frames[i] = fc ? fc.toDataURL('image/png') : null;
   }
   var blob = new Blob([JSON.stringify(data)], { type:'application/json' });
-  downloadBlob(blob, 'proyecto.fap');
+  downloadBlob(blob, nextExportName('fap'));
 }
 
 function loadFrameFromPNG(src, idx) {
