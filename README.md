@@ -188,6 +188,19 @@ Brush engine powered by `BRUSHES` config object + `setBrushStyle()`:
 - Opacity decay: 35% (nearest) → 26% → 17.5% (farthest)
 - Toggle via onion button or **O key**
 
+### Grid & Safe Zone Overlays
+
+Toggleable overlays drawn only on the display canvas — **never exported** in GIF, video, or `.fap` saves:
+
+| Feature | Button | Visual |
+|---|---|---|
+| **Grid** | `toggle grid.png` icon | 48px grid with semi-transparent gray lines across the canvas |
+| **Safe Zone** | `⊞` text button | Action safe (90% — red dashed border) + title safe (80% — red thin border), with dimmed outer areas |
+
+- Toggle via toolbar buttons next to the hand tool
+- Rendered on display context (`ctx`) only — not written to `fbCtx` or `frameCanvases`
+- Both can be active simultaneously and combined with onion skin
+
 ### 66-Color Palette
 
 - **Organized by hue gradient**: Black/White → Reds → Oranges → Yellows → Limes → Greens → Teals → Cyans → Blues → Purples → Magentas → Pinks → Grays
@@ -301,7 +314,7 @@ A `?` button on the right side of the toolbar opens a dropdown panel with all sh
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│ [logo] | undo redo | ◀ ▶ ■ ▶ | 0/24 + - FPS▾ | | B E G ◐ H | | S▬5px O▬100% | | + - 🔍 | gif mp4 save open │  ← unified toolbar (40px)
+│ [logo] | undo redo | ◀ ▶ ■ ▶ | 0/24 + - FPS▾ | | B E G ◐ H # ⊞ | | S▬5px O▬100% | | + - 🔍 | gif mp4 save open ? │  ← unified toolbar (40px)
 ├──────────────────────────────────────────────────────────────┤
 │ ◉ ■ ◎ │ ◉ ... (60 brushes, scrollable)                       │  ← brush strip (30px)
 ├──────────────────────────────────────────────────────────────┤
