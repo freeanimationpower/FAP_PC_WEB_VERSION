@@ -2,6 +2,9 @@
 
 **FAP** (Free Animation Power) is a zero-backend, zero-dependency 2D frame-by-frame animation web application — now optimized for **desktop workstations with drawing tablet support**.
 
+<img width="1368" height="1202" alt="LOGO FREE ANIMATION POWER con bg" src="https://github.com/user-attachments/assets/51955c57-f170-4166-a7f1-949b389a255a" />
+
+
 ---
 
 ## Desktop vs Mobile — Key Differences
