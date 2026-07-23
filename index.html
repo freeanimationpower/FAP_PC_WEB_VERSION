@@ -68,9 +68,10 @@ body {
 .ico.accent {
   filter: invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%);
 }
-.onion-on .ico-onion {
-  filter: invert(55%) sepia(98%) saturate(2500%) hue-rotate(2deg) brightness(105%);
+.onion-on .ico-onion-svg {
+  color: var(--accent) !important;
 }
+.btn svg { pointer-events: none; }
 .btn-label { flex-direction: column; gap: 0; width: 34px; height: auto; padding: 1px; }
 .btn-label .ico { width: 16px; height: 16px; }
 .btn-text { color: #fff; font-size: 6px; line-height: 1; text-transform: uppercase; pointer-events: none; }
@@ -335,7 +336,12 @@ body {
     <button class="btn active" data-action="toolBrush" title="Brush (B)"><img class="ico" src="icons/brush.png" alt="B"></button>
     <button class="btn" data-action="toolEraser" title="Eraser (E)"><img class="ico" src="icons/eraser.png" alt="E"></button>
     <button class="btn" data-action="toolFill" title="Fill (G)"><img class="ico" src="icons/fill.png" alt="F"></button>
-    <button class="btn onion-on" data-action="toggleOnion" title="Onion Skin (O)"><span class="ico-onion" style="color:var(--text-secondary);font-size:14px;line-height:1;pointer-events:none">◐</span></button>
+    <button class="btn onion-on" data-action="toggleOnion" title="Onion Skin (O)">
+      <svg class="ico-onion-svg" viewBox="0 0 24 24" width="14" height="14" style="pointer-events:none;color:var(--text-secondary)">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 2 A10 10 0 0 0 12 22" fill="currentColor" opacity="0.5"/>
+      </svg>
+    </button>
     <button class="btn" data-action="toolHand" title="Hand / Pan (H)"><img class="ico" src="icons/hand.png" alt="H"></button>
     <button class="btn" data-action="toggleGrid" title="Toggle Grid"><img class="ico" src="icons/toggle grid.png" alt="#"></button>
     <button class="btn" data-action="toggleSafeZone" title="Toggle Safe Zone" style="font-size:13px;line-height:1;color:var(--text-secondary);font-weight:700">⊞</button>
@@ -353,8 +359,17 @@ body {
     </div>
     <div class="tool-sep"></div>
     <div class="spacer"></div>
-    <button class="btn" data-action="zoomIn" title="Zoom In (+)" style="font-size:14px;color:var(--text-primary)">+</button>
-    <button class="btn" data-action="zoomOut" title="Zoom Out (-)" style="font-size:16px;color:var(--text-primary)">−</button>
+    <button class="btn" data-action="zoomIn" title="Zoom In (+)">
+      <svg viewBox="0 0 24 24" width="14" height="14" style="pointer-events:none;color:var(--text-primary)">
+        <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <button class="btn" data-action="zoomOut" title="Zoom Out (-)">
+      <svg viewBox="0 0 24 24" width="14" height="14" style="pointer-events:none;color:var(--text-primary)">
+        <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
     <button class="btn" data-action="zoomReset" title="Reset Zoom (Ctrl+0)"><img class="ico" src="icons/LUPA.png" alt="Z"></button>
     <div class="tool-sep"></div>
     <div class="spacer"></div>
