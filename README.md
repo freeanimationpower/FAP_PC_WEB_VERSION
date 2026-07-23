@@ -4,7 +4,7 @@
 
 <img width="1254" height="1254" alt="FAT PC WEB VERSION" src="https://github.com/user-attachments/assets/7a6c04c8-38fc-4b8a-9c79-d216916c9088" />
 
-
+> **Accede desde la web**: [freeanimationpower.org](https://freeanimationpower.org) — Hub central con todas las herramientas FAP. Sin instalacion.
 
 ---
 
@@ -42,6 +42,7 @@
 |---|---|
 | Mobile | [FAP_MOBILE_WEB_VERSION](https://github.com/freeanimationpower/FAP_MOBILE_WEB_VERSION) |
 | Desktop | [FAP_PC_WEB_VERSION](https://github.com/freeanimationpower/FAP_PC_WEB_VERSION) |
+| Web Hub | [FAP Web Hub](https://freeanimationpower.org) — Landing page oficial |
 
 ---
 
