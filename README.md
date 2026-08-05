@@ -28,6 +28,12 @@
 
 ---
 
+## Documentacion Tecnica
+
+- [Informe Tecnico FAP Desktop](informes_pdf/03_FAP_Desktop_Web.pdf) — Documento completo de arquitectura, stack tecnologico, diagramas de flujo y especificaciones tecnicas de la version PC/Web.
+
+---
+
 ## Credits
 
 **Design & Development:** Eduardo Fierro Duque
