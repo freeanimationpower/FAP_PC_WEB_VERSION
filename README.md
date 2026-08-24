@@ -4,7 +4,7 @@
 
 <img width="1254" height="1254" alt="FAT PC WEB VERSION" src="https://github.com/user-attachments/assets/7a6c04c8-38fc-4b8a-9c79-d216916c9088" />
 
-> **Accede desde la web**: [freeanimationpower.org](https://freeanimationpower.org) — Hub central con todas las herramientas FAP. Sin instalacion.
+> **Accede directamente**: [freeanimationpower.org/tools/pc/](https://freeanimationpower.org/tools/pc/) — Usa FAP Desktop Web sin instalar nada.
 
 ---
 
@@ -25,6 +25,12 @@
 | **Brushes** | 20 | **60** (20 classic + 40 new, all with pressure support) |
 | **Scrollbars** | Hidden (mobile UX) | **Visible** on all tool bars for small screens |
 | **Shortcuts** | Ctrl+Z, arrows, Space | **Full keyboard map** (B/E/G/H tools, 1-9 brushes, `[`/`]` size, Ctrl+S/O, mouse wheel zoom, etc.) |
+
+---
+
+## Documentacion Tecnica
+
+- [Informe Tecnico FAP Desktop](informes_pdf/03_FAP_Desktop_Web.pdf) — Documento completo de arquitectura, stack tecnologico, diagramas de flujo y especificaciones tecnicas de la version PC/Web.
 
 ---
 
