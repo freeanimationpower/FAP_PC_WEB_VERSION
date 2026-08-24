@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/favicon.png">
 <title>FAP Desktop</title>
 <style>
 /* ===== ROOT ===== */
@@ -121,6 +122,27 @@ body {
   background: var(--accent); cursor: pointer; border: 1.5px solid var(--accent-light);
 }
 .slider-value { color: var(--text-primary); font-size: 10px; min-width: 24px; text-align: center; }
+
+/* ===== SIZE DIALOG ===== */
+.size-btn { width:auto; min-width:46px; height:26px; padding:0 8px; border:1.5px solid var(--border); border-radius:5px; }
+.size-btn #sizeValue { color:var(--accent-light); font-size:12px; font-weight:700; pointer-events:none; }
+.size-dialog-overlay { position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:100; }
+.size-dialog { background:var(--bg-secondary); border:1.5px solid var(--accent); border-radius:12px; padding:16px; width:300px; box-shadow:0 12px 50px rgba(0,0,0,0.6); }
+.size-dialog-title { color:var(--text-primary); font-size:14px; font-weight:700; text-align:center; margin-bottom:12px; }
+.size-dialog-row { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:12px; }
+.size-step { width:44px; height:44px; border-radius:10px; border:1.5px solid var(--border); background:var(--bg-tertiary); color:var(--accent-light); font-size:24px; font-weight:700; cursor:pointer; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; }
+.size-step:hover { border-color:var(--accent-light); }
+.size-step:active { background:var(--accent); color:#fff; transform:scale(0.92); }
+.size-dialog-row input { width:96px; height:44px; text-align:center; font-size:20px; font-weight:700; color:var(--text-primary); background:var(--bg-tertiary); border:1.5px solid var(--border); border-radius:10px; outline:none; -webkit-user-select:text; user-select:text; }
+.size-dialog-row input:focus { border-color:var(--accent); }
+.size-dialog-preview { display:flex; align-items:center; justify-content:center; height:64px; margin-bottom:12px; background:var(--bg-tertiary); border-radius:10px; overflow:hidden; }
+.size-dot { border-radius:50%; background:var(--accent); border:1.5px solid var(--accent-light); transition:width 0.1s, height 0.1s; }
+.size-dialog-actions { display:flex; gap:10px; }
+.size-dialog-cancel, .size-dialog-ok { flex:1; height:40px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+.size-dialog-cancel { background:var(--bg-tertiary); color:var(--text-secondary); }
+.size-dialog-cancel:hover { background:var(--border); }
+.size-dialog-ok { background:var(--accent); color:#fff; }
+.size-dialog-ok:hover { background:var(--accent-light); }
 
 /* ===== SHORTCUTS DROPDOWN ===== */
 .shortcuts-dropdown {
@@ -307,7 +329,7 @@ body {
 <body>
 <div id="app">
 
-  <!-- TOOLBAR — unified bar: playback, tools, sliders, zoom, export -->
+  <!-- TOOLBAR &mdash; unified bar: playback, tools, sliders, zoom, export -->
   <div class="toolbar" id="toolbar">
     <img class="logo" src="icons/logo.png" alt="FAP">
     <div class="tool-sep"></div>
@@ -324,6 +346,8 @@ body {
     <span class="frame-counter" id="frameCounter">0 / 24</span>
     <button class="btn" data-action="addFrame" title="Add Frame"><img class="ico" src="icons/add_frame.png" alt="+"></button>
     <button class="btn" data-action="removeFrame" title="Remove Frame"><img class="ico" src="icons/remove_frame.png" alt="-"></button>
+    <button class="btn" id="copyFrameBtn" data-action="copyFrame" title="Copy Frame (Ctrl+C)"><svg viewBox="0 0 24 24" style="pointer-events:none"><rect x="8.5" y="8.5" width="11" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 8.5V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14A1.5 1.5 0 0 0 5.5 15.5h3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+    <button class="btn" id="pasteFrameBtn" data-action="pasteFrame" title="Paste Frame (Ctrl+V)" disabled><svg viewBox="0 0 24 24" style="pointer-events:none"><rect x="5" y="4.5" width="14" height="16.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 4.5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2V6H9z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 11h6M9 14.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <span class="fps-label">FPS</span>
     <select id="fpsSelector" class="fps-select">
       <option value="8">8</option>
@@ -355,8 +379,7 @@ body {
     <div class="spacer"></div>
     <div class="slider-group">
       <span class="slider-label">S</span>
-      <input type="range" id="sizeSlider" min="1" max="80" value="5" step="1" title="Brush Size ([ / ])">
-      <span class="slider-value" id="sizeValue">5px</span>
+      <button class="btn size-btn" id="sizeBtn" title="Brush Size ([ / ])"><span id="sizeValue">5px</span></button>
     </div>
     <div class="slider-group">
       <span class="slider-label">O</span>
@@ -422,6 +445,8 @@ body {
         <div class="sc-title">Edit & Export</div>
         <div class="sc-row"><span class="sc-key">Ctrl + Z</span><span class="sc-desc">Undo</span></div>
         <div class="sc-row"><span class="sc-key">Ctrl+Shift+Z</span><span class="sc-desc">Redo</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl + C</span><span class="sc-desc">Copy Frame</span></div>
+        <div class="sc-row"><span class="sc-key">Ctrl + V</span><span class="sc-desc">Paste Frame (over selected)</span></div>
         <div class="sc-row"><span class="sc-key">Ctrl + S</span><span class="sc-desc">Save Project (.fap)</span></div>
         <div class="sc-row"><span class="sc-key">Ctrl + O</span><span class="sc-desc">Open Project (.fap)</span></div>
         <div class="sc-row"><span class="sc-key">Ctrl+Shift+G</span><span class="sc-desc">Export GIF</span></div>
@@ -516,6 +541,23 @@ body {
     <button class="tl-scroll-btn tl-scroll-right" id="tlScrollRight" title="Scroll right">&#9654;</button>
   </div>
 
+  <!-- SIZE DIALOG -->
+  <div class="size-dialog-overlay" id="sizeDialog" style="display:none">
+    <div class="size-dialog">
+      <div class="size-dialog-title">Tamaño del pincel</div>
+      <div class="size-dialog-row">
+        <button class="size-step" id="sizeMinus" type="button">&#8722;</button>
+        <input type="number" id="sizeInput" min="1" max="200" step="1" inputmode="numeric" pattern="[0-9]*">
+        <button class="size-step" id="sizePlus" type="button">+</button>
+      </div>
+      <div class="size-dialog-preview"><div class="size-dot" id="sizeDot"></div></div>
+      <div class="size-dialog-actions">
+        <button class="size-dialog-cancel" id="sizeCancel" type="button">Cancelar</button>
+        <button class="size-dialog-ok" id="sizeOk" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -533,6 +575,7 @@ let isPanning = false, panStartX = 0, panStartY = 0, panStartPanX = 0, panStartP
 let isDrawing = false, lastX = 0, lastY = 0, lastPressure = 0.5;
 let spaceHeld = false, spaceDidPan = false, preSpaceTool = null;
 let exportCounter = 0;
+let frameClipboard = null;
 
 function nextExportName(ext) {
   exportCounter++;
@@ -623,7 +666,7 @@ function setBrushStyle(c, br, color, alpha, lw) {
 const COLORS = [
   // Blacks & Whites
   "#000000","#FFFFFF",
-  // Reds → dark to bright
+  // Reds â†’ dark to bright
   "#CC0000","#DC143C","#FF3333","#FF004D","#FF3366",
   // Red-Oranges
   "#FF4500","#FF5500","#FF6A00","#FF7700",
@@ -643,7 +686,7 @@ const COLORS = [
   "#00FFAA","#00FFCC","#00FFFF","#0AFFEF",
   // Cyan / Sky
   "#7DF9FF","#00D4FF","#00BFFF","#00CCCC","#008080",
-  // Blues → light to dark
+  // Blues â†’ light to dark
   "#87CEEB","#1E90FF","#3388FF","#0066CC","#4682B4",
   // Purples / Indigos
   "#8833FF","#7B00FF","#9933FF","#6A00FF","#4B0082",
@@ -748,6 +791,9 @@ function ensureFrameCanvas(key) {
     frameCanvases[key] = document.createElement('canvas');
     frameCanvases[key].width = frameBuffer.width;
     frameCanvases[key].height = frameBuffer.height;
+    var nctx = frameCanvases[key].getContext('2d');
+    nctx.fillStyle = '#FFFFFF';
+    nctx.fillRect(0, 0, frameCanvases[key].width, frameCanvases[key].height);
   }
 }
 
@@ -885,7 +931,7 @@ function loadFrame(fn) {
   drawSafeZone();
 }
 
-// ===== INPUT — POSITION =====
+// ===== INPUT &mdash; POSITION =====
 function getPos(e) {
   var rect = drawCanvas.getBoundingClientRect();
   return {
@@ -897,7 +943,7 @@ function getPos(e) {
   };
 }
 
-// ===== INPUT — START DRAW =====
+// ===== INPUT &mdash; START DRAW =====
 function startDraw(e) {
   if (state.activeTool === 'hand') {
     e.preventDefault();
@@ -923,7 +969,7 @@ function startDraw(e) {
   drawDot(p.x, p.y, p.pressure);
 }
 
-// ===== INPUT — MOVE DRAW =====
+// ===== INPUT &mdash; MOVE DRAW =====
 function moveDraw(e) {
   if (isPanning) {
     if (spaceHeld) spaceDidPan = true;
@@ -1625,7 +1671,7 @@ function moveDraw(e) {
   c.style.height = cs * (drawCanvas.width / 200) + 'px';
 }
 
-// ===== INPUT — END DRAW =====
+// ===== INPUT &mdash; END DRAW =====
 function endDraw(e) {
   if (isPanning) {
     isPanning = false;
@@ -2137,6 +2183,19 @@ function saveStroke() {
 }
 
 // ===== UNDO / REDO =====
+function restoreFrameSnapshot(key, imgData) {
+  var fc = frameCanvases[key];
+  var fctx = fc.getContext('2d');
+  storage.tmp.width = imgData.width;
+  storage.tmp.height = imgData.height;
+  storage.tmp.getContext('2d').putImageData(imgData, 0, 0);
+  fctx.clearRect(0, 0, fc.width, fc.height);
+  fctx.fillStyle = '#FFFFFF';
+  fctx.fillRect(0, 0, fc.width, fc.height);
+  fctx.drawImage(storage.tmp, 0, 0);
+  delete strokeCanvases[key];
+}
+
 function undoStroke() {
   var key = 'frame_' + state.currentFrame;
   var stack = undoStacks[key];
@@ -2153,8 +2212,7 @@ function undoStroke() {
 
   var prev = stack.pop();
   ensureFrameCanvas(key);
-  frameCanvases[key].getContext('2d').putImageData(prev, 0, 0);
-  delete strokeCanvases[key];
+  restoreFrameSnapshot(key, prev);
   loadFrame(state.currentFrame);
 }
 
@@ -2174,8 +2232,7 @@ function redoStroke() {
 
   var next = stack.pop();
   ensureFrameCanvas(key);
-  frameCanvases[key].getContext('2d').putImageData(next, 0, 0);
-  delete strokeCanvases[key];
+  restoreFrameSnapshot(key, next);
   loadFrame(state.currentFrame);
 }
 
@@ -2288,12 +2345,14 @@ function handleAction(action) {
       break;
     case 'removeFrame':
       if (state.totalFrames <= 1) return;
-      state.totalFrames--;
+      removeFrameAt(state.currentFrame);
       if (state.currentFrame >= state.totalFrames) state.currentFrame = state.totalFrames - 1;
       loadFrame(state.currentFrame);
       updateCounter();
       renderTimeline();
       break;
+    case 'copyFrame': copyCurrentFrame(); break;
+    case 'pasteFrame': pasteFrameOntoCurrent(); break;
     case 'exportGif': exportGIF(); break;
     case 'exportVideo': exportVideo(); break;
     case 'saveProject': saveProject(); break;
@@ -2321,14 +2380,61 @@ document.getElementById('brushStrip').addEventListener('click', function(e) {
 });
 
 // ===== SLIDERS =====
-document.getElementById('sizeSlider').addEventListener('input', function() {
-  state.brushSize = +this.value;
-  document.getElementById('sizeValue').textContent = this.value + 'px';
-});
 document.getElementById('opacitySlider').addEventListener('input', function() {
   state.brushOpacity = +this.value;
   document.getElementById('opacityValue').textContent = this.value + '%';
 });
+
+// ===== BRUSH SIZE DIALOG =====
+const sizeBtn = document.getElementById('sizeBtn');
+const sizeDialog = document.getElementById('sizeDialog');
+const sizeInput = document.getElementById('sizeInput');
+const sizeDot = document.getElementById('sizeDot');
+
+function clampSize(v) {
+  if (isNaN(v)) return state.brushSize;
+  return Math.max(1, Math.min(200, Math.round(v)));
+}
+function updateSizeUI() {
+  document.getElementById('sizeValue').textContent = state.brushSize + 'px';
+}
+function updateSizePreview() {
+  const v = clampSize(parseInt(sizeInput.value, 10));
+  const px = Math.min(120, Math.max(8, v * 0.9));
+  sizeDot.style.width = px + 'px';
+  sizeDot.style.height = px + 'px';
+}
+function openSizeDialog() {
+  sizeInput.value = state.brushSize;
+  updateSizePreview();
+  sizeDialog.style.display = 'flex';
+  setTimeout(function() { sizeInput.focus(); sizeInput.select(); }, 60);
+}
+function closeSizeDialog() { sizeDialog.style.display = 'none'; }
+function applySize() {
+  state.brushSize = clampSize(parseInt(sizeInput.value, 10));
+  sizeInput.value = state.brushSize;
+  updateSizeUI();
+  closeSizeDialog();
+}
+
+sizeBtn.addEventListener('click', openSizeDialog);
+document.getElementById('sizePlus').addEventListener('click', function() {
+  sizeInput.value = clampSize(parseInt(sizeInput.value, 10) + 1);
+  updateSizePreview();
+});
+document.getElementById('sizeMinus').addEventListener('click', function() {
+  sizeInput.value = clampSize(parseInt(sizeInput.value, 10) - 1);
+  updateSizePreview();
+});
+sizeInput.addEventListener('input', updateSizePreview);
+sizeInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); applySize(); }
+  if (e.key === 'Escape') { e.preventDefault(); closeSizeDialog(); }
+});
+document.getElementById('sizeOk').addEventListener('click', applySize);
+document.getElementById('sizeCancel').addEventListener('click', closeSizeDialog);
+sizeDialog.addEventListener('click', function(e) { if (e.target === sizeDialog) closeSizeDialog(); });
 
 // ===== FPS SELECTOR =====
 document.getElementById('fpsSelector').addEventListener('change', function() {
@@ -2420,6 +2526,55 @@ function selectFrame(i) {
   }
 }
 
+// ===== COPY / PASTE FRAMES =====
+function copyCurrentFrame() {
+  const key = `frame_${state.currentFrame}`;
+  ensureFrameCanvas(key);
+  const src = frameCanvases[key];
+  if (!frameClipboard) frameClipboard = document.createElement('canvas');
+  frameClipboard.width = src.width;
+  frameClipboard.height = src.height;
+  frameClipboard.getContext('2d').drawImage(src, 0, 0);
+  document.getElementById('pasteFrameBtn').disabled = false;
+  const cb = document.getElementById('copyFrameBtn');
+  cb.classList.add('active');
+  setTimeout(function() { cb.classList.remove('active'); }, 250);
+}
+
+function moveFrameKey(from, to) {
+  const s = `frame_${from}`, d = `frame_${to}`;
+  [frameCanvases, strokeCanvases, undoStacks, redoStacks].forEach(function(obj) {
+    if (obj[s]) { obj[d] = obj[s]; delete obj[s]; } else { delete obj[d]; }
+  });
+}
+
+function removeFrameAt(index) {
+  delete frameCanvases[`frame_${index}`];
+  delete strokeCanvases[`frame_${index}`];
+  delete undoStacks[`frame_${index}`];
+  delete redoStacks[`frame_${index}`];
+  for (let i = index + 1; i < state.totalFrames; i++) moveFrameKey(i, i - 1);
+  state.totalFrames--;
+}
+
+function pasteFrameOntoCurrent() {
+  if (!frameClipboard) return;
+  const key = `frame_${state.currentFrame}`;
+  if (!undoStacks[key]) undoStacks[key] = [];
+  ensureFrameCanvas(key);
+  undoStacks[key].push(
+    frameCanvases[key].getContext('2d').getImageData(0, 0, frameCanvases[key].width, frameCanvases[key].height)
+  );
+  if (undoStacks[key].length > MAX_UNDO) undoStacks[key].shift();
+  if (redoStacks[key]) redoStacks[key] = [];
+  const fc = frameCanvases[key];
+  const fctx = fc.getContext('2d');
+  fctx.clearRect(0, 0, fc.width, fc.height);
+  fctx.drawImage(frameClipboard, 0, 0);
+  delete strokeCanvases[key];
+  loadFrame(state.currentFrame);
+}
+
 function updateCounter() {
   document.getElementById('frameCounter').textContent = state.currentFrame + ' / ' + state.totalFrames;
 }
@@ -2468,11 +2623,118 @@ function togglePlay() {
   }
 }
 
+// ===== MEDIAN-CUT PALETTE =====
+function buildMedianCutPalette(frameData, maxColors) {
+  maxColors = maxColors || 256;
+
+  // Global RGB histogram across all frames
+  var freq = new Map();
+  for (var f = 0; f < frameData.length; f++) {
+    var d = frameData[f].data;
+    for (var i = 0; i < d.length; i += 4) {
+      var k = (d[i] << 16) | (d[i + 1] << 8) | d[i + 2];
+      freq.set(k, (freq.get(k) || 0) + 1);
+    }
+  }
+
+  var n = freq.size;
+  if (n === 0) return [[255, 255, 255]];
+  if (n <= maxColors) {
+    var out = [];
+    freq.forEach(function(c, k) {
+      out.push([(k >> 16) & 255, (k >> 8) & 255, k & 255]);
+    });
+    return out;
+  }
+
+  var rs = new Uint8Array(n);
+  var gs = new Uint8Array(n);
+  var bs = new Uint8Array(n);
+  var counts = new Uint32Array(n);
+  var ci = 0;
+  freq.forEach(function(c, k) {
+    rs[ci] = (k >> 16) & 255;
+    gs[ci] = (k >> 8) & 255;
+    bs[ci] = k & 255;
+    counts[ci] = c;
+    ci++;
+  });
+
+  var idxs = new Array(n);
+  var total = 0;
+  for (var ii = 0; ii < n; ii++) { idxs[ii] = ii; total += counts[ii]; }
+
+  var boxes = [{ idxs: idxs, count: total }];
+
+  while (boxes.length < maxColors) {
+    var bi = -1;
+    for (var b = 0; b < boxes.length; b++) {
+      if (boxes[b].idxs.length < 2) continue;
+      if (bi === -1 || boxes[b].count > boxes[bi].count) bi = b;
+    }
+    if (bi === -1) break;
+    var box = boxes[bi];
+
+    var minR = 255, maxR = 0, minG = 255, maxG = 0, minB = 255, maxB = 0;
+    for (var q = 0; q < box.idxs.length; q++) {
+      var qi = box.idxs[q];
+      var r = rs[qi], g = gs[qi], bb2 = bs[qi];
+      if (r < minR) minR = r;
+      if (r > maxR) maxR = r;
+      if (g < minG) minG = g;
+      if (g > maxG) maxG = g;
+      if (bb2 < minB) minB = bb2;
+      if (bb2 > maxB) maxB = bb2;
+    }
+    var rangeR = maxR - minR;
+    var rangeG = maxG - minG;
+    var rangeB = maxB - minB;
+    var ch = 0;
+    if (rangeG >= rangeR && rangeG >= rangeB) ch = 1;
+    else if (rangeB >= rangeR) ch = 2;
+
+    var vals = ch === 0 ? rs : (ch === 1 ? gs : bs);
+    box.idxs.sort(function(a, b) { return vals[a] - vals[b]; });
+
+    var half = box.count / 2;
+    var acc = 0, split = 0;
+    for (var s = 0; s < box.idxs.length; s++) {
+      acc += counts[box.idxs[s]];
+      split = s;
+      if (acc >= half) break;
+    }
+    split = Math.min(split + 1, box.idxs.length - 1);
+
+    var left = box.idxs.slice(0, split);
+    var right = box.idxs.slice(split);
+    var leftCount = 0;
+    for (var l = 0; l < left.length; l++) leftCount += counts[left[l]];
+
+    boxes[bi] = { idxs: left, count: leftCount };
+    boxes.push({ idxs: right, count: box.count - leftCount });
+  }
+
+  var palette = [];
+  for (var b3 = 0; b3 < boxes.length; b3++) {
+    var bx = boxes[b3];
+    var sr = 0, sg = 0, sb = 0, sc = 0;
+    for (var m = 0; m < bx.idxs.length; m++) {
+      var mi = bx.idxs[m];
+      sr += rs[mi] * counts[mi];
+      sg += gs[mi] * counts[mi];
+      sb += bs[mi] * counts[mi];
+      sc += counts[mi];
+    }
+    palette.push([Math.round(sr / sc), Math.round(sg / sc), Math.round(sb / sc)]);
+  }
+  return palette;
+}
+
 // ===== EXPORT GIF =====
 async function exportGIF() {
   if (state.isPlaying) togglePlay();
 
-  var GIF_W = Math.min(320, drawCanvas.width);
+  var GIF_W = Math.min(960, drawCanvas.width);
   var GIF_H = Math.round(GIF_W * (drawCanvas.height / drawCanvas.width));
 
   var frameData = [];
@@ -2481,25 +2743,23 @@ async function exportGIF() {
     var c = document.createElement('canvas');
     c.width = GIF_W; c.height = GIF_H;
     var oc = c.getContext('2d');
+    oc.fillStyle = '#FFFFFF';
+    oc.fillRect(0, 0, GIF_W, GIF_H);
+    oc.imageSmoothingEnabled = true;
+    oc.imageSmoothingQuality = 'high';
     oc.drawImage(src, 0, 0, GIF_W, GIF_H);
     frameData.push(oc.getImageData(0, 0, GIF_W, GIF_H));
     if (i % 5 === 0) await new Promise(function(r) { setTimeout(r, 0); });
   }
 
-  var freq = {};
-  for (var fi = 0; fi < frameData.length; fi++) {
-    var d = frameData[fi].data;
-    for (var ii = 0; ii < d.length; ii += 4) {
-      var k = d[ii] + ',' + d[ii + 1] + ',' + d[ii + 2];
-      freq[k] = (freq[k] || 0) + 1;
-    }
-  }
-  var sorted = Object.entries(freq).sort(function(a, b) { return b[1] - a[1]; });
-  var palette = [];
-  for (var pi = 0; pi < Math.min(256, sorted.length); pi++) {
-    palette.push(sorted[pi][0].split(',').map(Number));
-  }
+  // Build global palette (median-cut over all frames)
+  var palette = buildMedianCutPalette(frameData, 256);
   while (palette.length < 256) palette.push([0, 0, 0]);
+
+  var paletteMap = new Map();
+  for (var pmi = 0; pmi < palette.length; pmi++) {
+    paletteMap.set(palette[pmi][0] + ',' + palette[pmi][1] + ',' + palette[pmi][2], pmi);
+  }
 
   var CUBE_BITS = 5;
   var CUBE_SIZE = 1 << CUBE_BITS;
@@ -2521,6 +2781,15 @@ async function exportGIF() {
     }
   }
   await new Promise(function(r) { setTimeout(r, 0); });
+
+  var shift = 8 - CUBE_BITS;
+  var stride = CUBE_SIZE * CUBE_SIZE;
+  function gifColorIndex(r, g, b) {
+    var ri = (r | 0), gi = (g | 0), bi = (b | 0);
+    var hit = paletteMap.get(ri + ',' + gi + ',' + bi);
+    if (hit !== undefined) return hit;
+    return cube[(ri >> shift) * stride + (gi >> shift) * CUBE_SIZE + (bi >> shift)];
+  }
 
   var bytes = [];
   var b = function(v) { bytes.push(v & 0xFF); };
@@ -2544,14 +2813,56 @@ async function exportGIF() {
     b(0x2C); ss(0); ss(0); ss(GIF_W); ss(GIF_H); b(0x00);
 
     var dd = frameData[fi2].data;
-    var indices = [];
-    var shift = 8 - CUBE_BITS;
-    var stride = CUBE_SIZE * CUBE_SIZE;
-    for (var ii2 = 0; ii2 < dd.length; ii2 += 4) {
-      var ri = dd[ii2] >> shift;
-      var gi = dd[ii2 + 1] >> shift;
-      var bi = dd[ii2 + 2] >> shift;
-      indices.push(cube[ri * stride + gi * CUBE_SIZE + bi]);
+    var W = GIF_W, H = GIF_H;
+    var indices = new Uint8Array(W * H);
+    var errR = new Float32Array(W * H);
+    var errG = new Float32Array(W * H);
+    var errB = new Float32Array(W * H);
+    for (var y = 0; y < H; y++) {
+      var ltr = (y % 2 === 0);
+      for (var s = 0; s < W; s++) {
+        var x = ltr ? s : W - 1 - s;
+        var pi = y * W + x;
+        var p4 = pi * 4;
+        var rr = dd[p4] + errR[pi];
+        var gg = dd[p4 + 1] + errG[pi];
+        var bb = dd[p4 + 2] + errB[pi];
+        if (rr < 0) rr = 0; else if (rr > 255) rr = 255;
+        if (gg < 0) gg = 0; else if (gg > 255) gg = 255;
+        if (bb < 0) bb = 0; else if (bb > 255) bb = 255;
+        var ci = gifColorIndex(rr, gg, bb);
+        indices[pi] = ci;
+        var er = rr - palette[ci][0];
+        var eg = gg - palette[ci][1];
+        var eb = bb - palette[ci][2];
+        var nx = ltr ? x + 1 : x - 1;
+        var ox = ltr ? x - 1 : x + 1;
+        var ny = y + 1;
+        if (nx >= 0 && nx < W) {
+          var q = y * W + nx;
+          errR[q] += er * 0.4375;
+          errG[q] += eg * 0.4375;
+          errB[q] += eb * 0.4375;
+        }
+        if (ny < H) {
+          if (ox >= 0 && ox < W) {
+            var q1 = ny * W + ox;
+            errR[q1] += er * 0.1875;
+            errG[q1] += eg * 0.1875;
+            errB[q1] += eb * 0.1875;
+          }
+          var q2 = ny * W + x;
+          errR[q2] += er * 0.3125;
+          errG[q2] += eg * 0.3125;
+          errB[q2] += eb * 0.3125;
+          if (nx >= 0 && nx < W) {
+            var q3 = ny * W + nx;
+            errR[q3] += er * 0.0625;
+            errG[q3] += eg * 0.0625;
+            errB[q3] += eb * 0.0625;
+          }
+        }
+      }
     }
 
     var minCode = 8;
@@ -2706,6 +3017,8 @@ function loadFrameFromPNG(src, idx) {
       ensureFrameCanvas('frame_' + idx);
       var fctx = frameCanvases['frame_' + idx].getContext('2d');
       fctx.clearRect(0, 0, fctx.canvas.width, fctx.canvas.height);
+      fctx.fillStyle = '#FFFFFF';
+      fctx.fillRect(0, 0, fctx.canvas.width, fctx.canvas.height);
       fctx.drawImage(img, 0, 0);
       resolve();
     };
@@ -2737,10 +3050,10 @@ function loadProjectFile(file) {
         loadFrame(0);
         updateCounter();
         renderTimeline();
-        console.log('FAP: proyecto cargado — ' + state.totalFrames + ' frames, ' + state.fps + ' fps');
+        console.log('FAP: proyecto cargado &mdash; ' + state.totalFrames + ' frames, ' + state.fps + ' fps');
       });
     } catch (err) {
-      alert('Archivo .fap inválido o corrupto.');
+      alert('Archivo .fap invÃ¡lido o corrupto.');
       console.error('FAP load error:', err);
     }
   };
@@ -2759,7 +3072,7 @@ document.addEventListener('keydown', function(e) {
   // Ignore if typing in input/select elements
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
 
-  // Space — pan mode or play/pause
+  // Space &mdash; pan mode or play/pause
   if (e.code === 'Space' && !e.repeat) {
     e.preventDefault();
     spaceHeld = true;
@@ -2780,12 +3093,14 @@ document.addEventListener('keydown', function(e) {
   if (ctrl && !shift && e.key.toLowerCase() === 'z') { e.preventDefault(); undoStroke(); return; }
   if (ctrl && shift && e.key.toLowerCase() === 'z') { e.preventDefault(); redoStroke(); return; }
   if (ctrl && e.key.toLowerCase() === 'y') { e.preventDefault(); redoStroke(); return; }
+  if (ctrl && e.key.toLowerCase() === 'c') { e.preventDefault(); copyCurrentFrame(); return; }
+  if (ctrl && !shift && e.key.toLowerCase() === 'v') { e.preventDefault(); pasteFrameOntoCurrent(); return; }
   if (ctrl && e.key.toLowerCase() === 's') { e.preventDefault(); saveProject(); return; }
   if (ctrl && e.key.toLowerCase() === 'o') { e.preventDefault(); document.getElementById('openFileInput').click(); return; }
   if (ctrl && shift && e.key.toLowerCase() === 'g') { e.preventDefault(); exportGIF(); return; }
   if (ctrl && shift && e.key.toLowerCase() === 'v') { e.preventDefault(); exportVideo(); return; }
 
-  // Arrow keys — frame navigation
+  // Arrow keys &mdash; frame navigation
   if (e.key === 'ArrowLeft') { e.preventDefault(); selectFrame(Math.max(0, state.currentFrame - 1)); return; }
   if (e.key === 'ArrowRight') { e.preventDefault(); selectFrame(Math.min(state.totalFrames - 1, state.currentFrame + 1)); return; }
   if (e.key === 'Home') { e.preventDefault(); selectFrame(0); return; }
@@ -2804,14 +3119,12 @@ document.addEventListener('keydown', function(e) {
   if (e.key === '[') {
     e.preventDefault();
     state.brushSize = Math.max(1, state.brushSize - 1);
-    document.getElementById('sizeSlider').value = state.brushSize;
-    document.getElementById('sizeValue').textContent = state.brushSize + 'px';
+    updateSizeUI();
   }
   if (e.key === ']') {
     e.preventDefault();
-    state.brushSize = Math.min(80, state.brushSize + 1);
-    document.getElementById('sizeSlider').value = state.brushSize;
-    document.getElementById('sizeValue').textContent = state.brushSize + 'px';
+    state.brushSize = Math.min(200, state.brushSize + 1);
+    updateSizeUI();
   }
 
   // Opacity
@@ -2863,3 +3176,4 @@ loadFrame(0);
 </script>
 </body>
 </html>
+
