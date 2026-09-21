@@ -1,16 +1,41 @@
-# FAP Desktop — 2D Animation Studio for PC
+# Free Animation Power Desktop — 2D Animation Studio for PC
+<p align="center">
+  <a href="https://freeanimationpower.org"><img src="https://img.shields.io/badge/Web_Hub-freeanimationpower.org-ffdc00?style=for-the-badge" alt="Web Hub"></a>
+  <a href="https://www.youtube.com/@freeanimationpower"><img src="https://img.shields.io/badge/YouTube-@freeanimationpower-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://github.com/freeanimationpower"><img src="https://img.shields.io/badge/GitHub-freeanimationpower-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+</p>
 
-**FAP** (Free Animation Power) is a zero-backend, zero-dependency 2D frame-by-frame animation web application — now optimized for **desktop workstations with drawing tablet support**.
+<p align="center">
+  <img src="docs/screenshot.png" alt="Free Animation Power Desktop Web — estudio de animación 2D para PC" width="860">
+</p>
+
+## 🎬 Videos
+
+📺 Canal oficial: [@freeanimationpower](https://www.youtube.com/@freeanimationpower)
+
+| Vídeo | Título |
+|---|---|
+| <a href="https://youtu.be/M5xv4Qin8lk"><img src="https://i.ytimg.com/vi/M5xv4Qin8lk/hqdefault.jpg" width="240"></a> | [Parte 1 — Los 60 pinceles del estudio](https://youtu.be/M5xv4Qin8lk) |
+| <a href="https://youtu.be/WC04M2VsPEU"><img src="https://i.ytimg.com/vi/WC04M2VsPEU/hqdefault.jpg" width="240"></a> | [Pinceles y formas: todo lo que puedes dibujar, sin instalar nada](https://youtu.be/WC04M2VsPEU) |
+| <a href="https://youtu.be/4cx9UPKGHk4"><img src="https://i.ytimg.com/vi/4cx9UPKGHk4/hqdefault.jpg" width="240"></a> | [Parte 2 — El papel de cebolla (Onion Skin)](https://youtu.be/4cx9UPKGHk4) |
+| <a href="https://youtu.be/V8KUpxhSmLg"><img src="https://i.ytimg.com/vi/V8KUpxhSmLg/hqdefault.jpg" width="240"></a> | [Parte 3 — Anima, exporta y guarda tu proyecto (.fap)](https://youtu.be/V8KUpxhSmLg) |
+| <a href="https://youtu.be/oZhR_qRfKXc"><img src="https://i.ytimg.com/vi/oZhR_qRfKXc/hqdefault.jpg" width="240"></a> | [Parte 5 — Da vida al movimiento](https://youtu.be/oZhR_qRfKXc) |
+| <a href="https://youtu.be/tBLamOnNx0o"><img src="https://i.ytimg.com/vi/tBLamOnNx0o/hqdefault.jpg" width="240"></a> | [Parte 6 — Pestañeos y detalles a baja opacidad (8 FPS)](https://youtu.be/tBLamOnNx0o) |
+| <a href="https://youtu.be/W85Ypj3Q9TQ"><img src="https://i.ytimg.com/vi/W85Ypj3Q9TQ/hqdefault.jpg" width="240"></a> | [Cómo animar frame a frame: Onion Skin, pinceles y movimiento](https://youtu.be/W85Ypj3Q9TQ) |
+| <a href="https://youtu.be/D8SAFT4FtoI"><img src="https://i.ytimg.com/vi/D8SAFT4FtoI/hqdefault.jpg" width="240"></a> | [Pinceles, tamaño, opacidad y exportar GIF o MP4: el flujo completo](https://youtu.be/D8SAFT4FtoI) |
+| <a href="https://youtu.be/8Ml_FsQrggQ"><img src="https://i.ytimg.com/vi/8Ml_FsQrggQ/hqdefault.jpg" width="240"></a> | [Ejercicio de la pelota rebotando: pinceles y onion skin](https://youtu.be/8Ml_FsQrggQ) |
+
+**Free Animation Power** (Free Animation Power) is a zero-backend, zero-dependency 2D frame-by-frame animation web application — now optimized for **desktop workstations with drawing tablet support**.
 
 <img width="1254" height="1254" alt="FAT PC WEB VERSION" src="https://github.com/user-attachments/assets/7a6c04c8-38fc-4b8a-9c79-d216916c9088" />
 
-> **Accede directamente**: [freeanimationpower.org/tools/pc/](https://freeanimationpower.org/tools/pc/) — Usa FAP Desktop Web sin instalar nada.
+> **Accede directamente**: [freeanimationpower.org/tools/pc/](https://freeanimationpower.org/tools/pc/) — Usa Free Animation Power Desktop Web sin instalar nada.
 
 ---
 
 ## Desktop vs Mobile — Key Differences
 
-| Feature | FAP Mobile | FAP Desktop |
+| Feature | Free Animation Power Mobile | Free Animation Power Desktop |
 |---|---|---|
 | **Target** | Phone / tablet (touch) | PC / workstation (mouse + drawing tablet) |
 | **Canvas** | 9:16 portrait, auto-sized to phone viewport | **16:9 landscape, fixed 1920×1080 px** internal resolution |
@@ -30,7 +55,7 @@
 
 ## Documentacion Tecnica
 
-- [Informe Tecnico FAP Desktop](informes_pdf/03_FAP_Desktop_Web.pdf) — Documento completo de arquitectura, stack tecnologico, diagramas de flujo y especificaciones tecnicas de la version PC/Web.
+- [Informe Tecnico Free Animation Power Desktop](informes_pdf/03_FAP_Desktop_Web.pdf) — Documento completo de arquitectura, stack tecnologico, diagramas de flujo y especificaciones tecnicas de la version PC/Web.
 
 ---
 
@@ -48,7 +73,7 @@
 |---|---|
 | Mobile | [FAP_MOBILE_WEB_VERSION](https://github.com/freeanimationpower/FAP_MOBILE_WEB_VERSION) |
 | Desktop | [FAP_PC_WEB_VERSION](https://github.com/freeanimationpower/FAP_PC_WEB_VERSION) |
-| Web Hub | [FAP Web Hub](https://freeanimationpower.org) — Landing page oficial |
+| Web Hub | [Free Animation Power Web Hub](https://freeanimationpower.org) — Landing page oficial |
 
 ---
 
@@ -71,7 +96,7 @@
 
 ### Input System — Pointer Events
 
-FAP Desktop uses the **Pointer Events API** as its sole input system, replacing the three separate event systems (touch + mouse + basic pointer) from the mobile version:
+Free Animation Power Desktop uses the **Pointer Events API** as its sole input system, replacing the three separate event systems (touch + mouse + basic pointer) from the mobile version:
 
 ```
 pointerdown  → setPointerCapture(e.pointerId) → startDraw(e)
@@ -344,7 +369,7 @@ A `?` button on the right side of the toolbar opens a dropdown panel with all sh
 
 ## Drawing Tablet Compatibility
 
-FAP Desktop uses the standard **Pointer Events API** — supported natively by all modern browsers on Windows, macOS, and Linux. This means it works with:
+Free Animation Power Desktop uses the standard **Pointer Events API** — supported natively by all modern browsers on Windows, macOS, and Linux. This means it works with:
 
 - **Wacom** (Intuos, Cintiq, Bamboo, One, etc.)
 - **Huion** (Kamvas, Inspiroy, H Series, etc.)
