@@ -94,6 +94,44 @@
 
 ## Architecture
 
+```mermaid
+flowchart LR
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ffdc00', 'primaryBorderColor': '#1a1a1a', 'primaryTextColor': '#1a1a1a', 'lineColor': '#ff4200', 'fontFamily': 'Segoe UI'}}}%%
+    classDef ui fill:#ffdc00,stroke:#1a1a1a,color:#1a1a1a,stroke-width:2px;
+    classDef engine fill:#ff4200,stroke:#1a1a1a,color:#ffffff,stroke-width:2px;
+    classDef data fill:#1a1a1a,stroke:#ff4200,color:#ffffff,stroke-width:2px;
+    classDef ext fill:#ffffff,stroke:#1a1a1a,color:#1a1a1a,stroke-width:2px,stroke-dasharray:6 3;
+        subgraph IN["🖱️ Input — Pointer Events API"]
+            direction TB
+            PEN["Pen / Mouse / Touch"]
+            PRS["Pressure modulation<br/>size + opacity"]
+        end
+        subgraph DRAW["✏️ Drawing Engine"]
+            direction TB
+            STB["strokeBuffer_<br/>current stroke isolated"]
+            CMP["composite → pixelBuffer_<br/>per layer"]
+        end
+        subgraph PIPE["🖼️ Rendering Pipeline — loadFrame()"]
+            direction TB
+            ONI["White canvas + onion skin"]
+            LYR["Layers composited"]
+            OVL["Grid / safe zone overlays<br/>display only, never exported"]
+            DSP["Display canvas 1920×1080"]
+        end
+        subgraph IOF["💾 Output"]
+            direction TB
+            EXP["Export GIF / Video"]
+            SAV["Save .fap project<br/>PNG base64 frames"]
+        end
+        PEN --> PRS --> STB --> CMP --> ONI --> LYR --> OVL --> DSP
+        DSP --> EXP
+        DSP --> SAV
+        class PEN,PRS ui
+        class STB,CMP,ONI,LYR engine
+        class OVL,DSP ui
+        class EXP,SAV ext
+```
+
 ### Input System — Pointer Events
 
 Free Animation Power Desktop uses the **Pointer Events API** as its sole input system, replacing the three separate event systems (touch + mouse + basic pointer) from the mobile version:
